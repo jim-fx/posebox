@@ -47,7 +47,10 @@
 
 <svelte:window
   on:keydown={() => {
+    console.log("---GOT TRAINING DATA---");
+    console.log(poses[currentIndex].description);
     console.log(pose);
+    console.log("-----------------------");
     currentIndex = (currentIndex + 1) % poses.length;
   }}
 />
