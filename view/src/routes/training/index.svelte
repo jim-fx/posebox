@@ -6,12 +6,72 @@
 
   const poses = [
     {
-      description: "T pose",
-      id: "a",
+      description: "X Pose (Verschränkte Arme)",
+      id: "o",
       pose: {},
     },
     {
-      description: "Mache ein O",
+      description: "OK (Arme um den Kopf)",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Beten/bitte",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Hände in den Himmel",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Boxer Pose",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Hoch rechts Hoch",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Hoch rechts Mitte",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Hoch rechts Runter",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Mitte rechts Hoch",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Mitee rechts Mitte",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Mitte rechts Unten",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Unten rechts Hoch",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Unten rechts Mitte",
+      id: "o",
+      pose: {},
+    },
+    {
+      description: "Links Unten rechts Unten",
       id: "o",
       pose: {},
     },
@@ -32,8 +92,10 @@
       detector = createPoseDetector(
         video,
         throttle((p) => {
+          console.log("nächste pose " ,poses[currentIndex].description)
+          console.log(p);
           pose = p;
-        }, 2000)
+        }, 10000)
       );
 
       video.play();
@@ -41,6 +103,7 @@
       console.error(error);
     }
   });
+
 </script>
 
 <h3>Training Route</h3>

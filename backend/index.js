@@ -18,7 +18,10 @@ app.use(
   })
 );
 
-app.get("/test", (req, res) => {
+const rawJson = fs.readFileSync("data/poses.json")
+console.log(rawJson)
+
+app.get("/poses", (req, res) => {
   res.json({ test: "okay" });
 });
 
