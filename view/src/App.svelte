@@ -1,29 +1,58 @@
 <script lang="ts">
-  import Main from "./routes/main/index.svelte";
-  import Training from "./routes/training/index.svelte";
+  import * as routes from "./routes";
 
-  export let route: string =
+  export let activeRoute: string =
     window.location.hash.length > 2
       ? window.location.hash.replace("#", "")
       : "main";
 
-  $: if (route) {
-    window.location.hash = route;
+  $: if (activeRoute) {
+    window.location.hash = activeRoute;
   }
 </script>
 
-<button on:click={() => (route = "main")}>main</button>
-<button on:click={() => (route = "training")}>training</button>
+<nav>
+  {#each Object.keys(routes) as route}
+    <button
+      class:active={activeRoute == route}
+      on:click={() => {
+        activeRoute = route;
+      }}
+    >
+      {route}
+    </button>
+  {/each}
+</nav>
 
 <main>
-  {#if route == "main"}
-    <Main />
-  {:else if route == "training"}
-    <Training />
+  {#if activeRoute in routes}
+    <svelte:component this={routes[activeRoute]} />
   {/if}
 </main>
 
 <style>
+  nav {
+    position: fixed;
+    top: 50vh;
+    transform: translateY(-50%);
+  }
+
+  nav > button {
+    color: white;
+    background: transparent;
+    border: none;
+    display: block;
+    font-weight: bolder;
+    font-size: 1.5em;
+    border-radius: 0px;
+    cursor: pointer;
+  }
+
+  nav > button.active {
+    color: black;
+    background-color: white;
+  }
+
   main {
     text-align: center;
     padding: 1em;

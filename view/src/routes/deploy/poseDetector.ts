@@ -1,4 +1,4 @@
-import ml5 from "ml5";
+import type ml5 from "ml5";
 
 export default function createPoseDetector(video, cb) {
   let pose;
@@ -10,7 +10,6 @@ export default function createPoseDetector(video, cb) {
   const { width, height } = video;
 
   poseNet.on("pose", (_pose) => {
-
     if (_pose[0]) {
       pose = _pose[0].pose;
 

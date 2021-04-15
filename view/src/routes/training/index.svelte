@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import throttle from "../../helpers/throttle";
   import PoseDisplay from "../../components/PoseDisplay.svelte";
-  import createPoseDetector from "../main/poseDetector";
+  import createPoseDetector from "../deploy/poseDetector";
 
   const poses = [
     {
