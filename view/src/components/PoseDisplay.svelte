@@ -7,12 +7,12 @@
 </script>
 
 <div class="wrapper">
-  {#if pose && pose.keypoints}
-    {#each pose.keypoints as point}
+  {#if pose}
+    {#each pose as point}
       <div
         class="point"
-        style={`transform: translate(${point.position.x * 500}px, ${
-          point.position.y * 500
+        style={`transform: translate(${point.x * 500}px, ${
+          point.y * 500
         }px);`}
       />
     {/each}

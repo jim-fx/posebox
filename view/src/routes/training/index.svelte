@@ -82,6 +82,32 @@
   let pose;
   let _pose;
   let currentIndex = 0;
+  let duration = 8;
+  let currentTime = duration;
+
+  //@ts-ignore
+  window.poses = poses;
+
+  const synth = window.speechSynthesis
+
+  function speak(sentence) {
+    const Kevin = new SpeechSynthesisUtterance(sentence)
+    synth.speak(Kevin)
+  }
+
+  function startRecording() {
+    setInterval(() => {
+      if (currentIndex < poses.length) {
+        if (currentTime == 0) {
+          currentTime = duration;
+          poses[currentIndex].pose = pose;
+          currentIndex++;
+          speak(poses[currentIndex].description);
+        }
+        currentTime--;
+      }
+    }, 1000);
+  }
 
   onMount(async () => {
     try {
@@ -89,37 +115,28 @@
 
       video.srcObject = stream;
 
-      detector = createPoseDetector(
-        video,
-        throttle((p) => {
-          console.log("nächste pose " ,poses[currentIndex].description)
-          console.log(p);
-          pose = p;
-        }, 10000)
-      );
+      detector = createPoseDetector(video, (p) => {
+        pose = p;
+      });
 
       video.play();
     } catch (error) {
       console.error(error);
     }
   });
-
 </script>
 
 <h3>Training Route</h3>
 
 <svelte:window
   on:keydown={() => {
-    console.log("---GOT TRAINING DATA---");
-    console.log(poses[currentIndex].description);
-    console.log(pose);
-    console.log("-----------------------");
-    currentIndex = (currentIndex + 1) % poses.length;
+    startRecording();
   }}
 />
 
 <div class="wrapper">
-  <p>{poses[currentIndex].description}</p>
+  <p style="font-size: larger;">{poses[currentIndex].description}</p>
+  <p>{currentTime}</p>
 
   <video bind:this={video} width="600" height="480">
     <track kind="captions" />
@@ -129,4 +146,8 @@
 </div>
 
 <style>
+  video {
+    transform: translateX(-50%);
+    position: absolute;
+  }
 </style>
