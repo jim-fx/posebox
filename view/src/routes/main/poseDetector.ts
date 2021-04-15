@@ -10,16 +10,19 @@ export default function createPoseDetector(video, cb) {
   const { width, height } = video;
 
   poseNet.on("pose", (_pose) => {
-    pose = _pose[0].pose;
 
-    //Normalize coordinates
-    pose.keypoints = pose.keypoints.map((p) => {
-      p.position.x /= width;
-      p.position.y /= height;
-      return p;
-    });
+    if (_pose[0]) {
+      pose = _pose[0].pose;
 
-    cb && cb(pose);
+      //Normalize coordinates
+      pose.keypoints = pose.keypoints.map((p) => {
+        p.position.x /= width;
+        p.position.y /= height;
+        return p;
+      });
+
+      cb && cb(pose);
+    }
   });
 
   return {

@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import createPoseDetector from "./poseDetector.js";
   import PoseDisplay from "../../components/PoseDisplay.svelte";
-  import throttle from "../../../helpers/throttle";
+  import throttle from "../../helpers/throttle";
 
   let video;
   let skeleton;

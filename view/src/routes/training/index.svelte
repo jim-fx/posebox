@@ -1,12 +1,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import throttle from "../../../helpers/throttle";
+  import throttle from "../../helpers/throttle";
   import PoseDisplay from "../../components/PoseDisplay.svelte";
   import createPoseDetector from "../main/poseDetector";
 
   const poses = [
     {
-      description: "Mache ein A",
+      description: "T pose",
       id: "a",
       pose: {},
     },
