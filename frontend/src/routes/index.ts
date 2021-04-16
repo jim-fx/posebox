@@ -1,3 +1,3 @@
-export { default as Data } from "./data/index.svelte";
-export { default as Training } from "./training/index.svelte";
-export { default as Deploy } from "./deploy/index.svelte";
+export { default as data } from "./data/index.svelte";
+export { default as training } from "./training/index.svelte";
+export { default as deploy } from "./deploy/index.svelte";

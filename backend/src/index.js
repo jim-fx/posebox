@@ -2,35 +2,25 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const path = require("path");
+const socketServer = require("./socket-server");
 
 const http = require("http");
 
 const app = express();
 const server = http.createServer(app);
-const io = require("socket.io")(server);
+socketServer.connect(server);
 
-app.use(express.static("../view/public"));
+app.use(express.static("../frontend/public"));
 
 app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
+
+const rawJson = fs.readFileSync(
+  path.resolve(__dirname, "data/poses.json"),
+  "utf-8"
 );
-
-const rawJson = fs.readFileSync("data/poses.json", "utf-8");
 const poses = JSON.parse(rawJson);
-// console.log(rawJson);
-
 app.get("/poses", (req, res) => {
   res.json(poses);
-});
-
-io.on("connection", (socket) => {
-  console.log("socket connected");
-  socket.on("pose", (pose) => {
-    socket.broadcast.emit("pose", pose);
-  });
 });
 
 app.post("/training", (req, res) => {

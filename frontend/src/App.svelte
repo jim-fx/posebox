@@ -4,7 +4,7 @@
   export let activeRoute: string =
     window.location.hash.length > 2
       ? window.location.hash.replace("#", "")
-      : "main";
+      : "data";
 
   $: if (activeRoute) {
     window.location.hash = activeRoute;
@@ -19,7 +19,7 @@
         activeRoute = route;
       }}
     >
-      {route}
+      {route.charAt(0).toUpperCase() + route.slice(1)}
     </button>
   {/each}
 </nav>
