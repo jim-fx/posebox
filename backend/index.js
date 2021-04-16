@@ -18,11 +18,12 @@ app.use(
   })
 );
 
-const rawJson = fs.readFileSync("data/poses.json")
-console.log(rawJson)
+const rawJson = fs.readFileSync("data/poses.json", "utf-8");
+const poses = JSON.parse(rawJson);
+// console.log(rawJson);
 
 app.get("/poses", (req, res) => {
-  res.json({ test: "okay" });
+  res.json(poses);
 });
 
 io.on("connection", (socket) => {
