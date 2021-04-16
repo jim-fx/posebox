@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "ml5": "^0.6.1",
+    "p5-svelte": "^2.2.2",
     "sirv-cli": "^1.0.0",
     "socket.io": "^4.0.1"
   }

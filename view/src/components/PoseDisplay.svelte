@@ -11,9 +11,7 @@
     {#each pose as point}
       <div
         class="point"
-        style={`transform: translate(${point.x * 500}px, ${
-          point.y * 500
-        }px);`}
+        style={`transform: translate(${point.x * 600}px, ${point.y * 450}px);`}
       />
     {/each}
   {/if}
@@ -21,8 +19,9 @@
 
 <style>
   .wrapper {
-    width: 500px;
-    height: 500px;
+    width: 600px;
+    height: 450px;
+    top: 15px;
     position: relative;
     margin: 0 auto;
     border: solid thin red;

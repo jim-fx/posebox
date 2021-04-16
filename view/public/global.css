@@ -69,3 +69,11 @@ button:not(:disabled):active {
 button:focus {
   border-color: #666;
 }
+
+.p5Canvas {
+  z-index: 2;
+  width: 600px;
+  height: 480px;
+  transform: translate(-50%, 150px);
+  position: absolute;
+}
