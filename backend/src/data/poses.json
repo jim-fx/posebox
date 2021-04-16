@@ -1,7 +1,7 @@
 [
     {
         "description": "X Pose (Verschränkte Arme)",
-        "id": "o",
+        "id": "x",
         "pose": [
             {
                 "part": "nose",
@@ -92,7 +92,7 @@
     },
     {
         "description": "OK (Arme um den Kopf)",
-        "id": "o",
+        "id": "ok",
         "pose": [
             {
                 "part": "nose",
@@ -183,7 +183,7 @@
     },
     {
         "description": "Beten/bitte",
-        "id": "o",
+        "id": "pray",
         "pose": [
             {
                 "part": "nose",
@@ -274,7 +274,7 @@
     },
     {
         "description": "Hände in den Himmel",
-        "id": "o",
+        "id": "himmel",
         "pose": [
             {
                 "part": "nose",
@@ -365,7 +365,7 @@
     },
     {
         "description": "Boxer Pose",
-        "id": "o",
+        "id": "boxer",
         "pose": [
             {
                 "part": "nose",
@@ -456,7 +456,7 @@
     },
     {
         "description": "Links Hoch rechts Hoch",
-        "id": "o",
+        "id": "lhrh",
         "pose": [
             {
                 "part": "nose",
@@ -547,7 +547,7 @@
     },
     {
         "description": "Links Hoch rechts Mitte",
-        "id": "o",
+        "id": "lhrm",
         "pose": [
             {
                 "part": "nose",
@@ -638,7 +638,7 @@
     },
     {
         "description": "Links Hoch rechts Runter",
-        "id": "o",
+        "id": "lhrr",
         "pose": [
             {
                 "part": "nose",
@@ -729,7 +729,7 @@
     },
     {
         "description": "Links Mitte rechts Hoch",
-        "id": "o",
+        "id": "lmrh",
         "pose": [
             {
                 "part": "nose",
@@ -820,7 +820,7 @@
     },
     {
         "description": "Links Mitee rechts Mitte",
-        "id": "o",
+        "id": "lmrm",
         "pose": [
             {
                 "part": "nose",
@@ -911,7 +911,7 @@
     },
     {
         "description": "Links Mitte rechts Unten",
-        "id": "o",
+        "id": "lmru",
         "pose": [
             {
                 "part": "nose",
@@ -1002,7 +1002,7 @@
     },
     {
         "description": "Links Unten rechts Hoch",
-        "id": "o",
+        "id": "lurh",
         "pose": [
             {
                 "part": "nose",
@@ -1093,7 +1093,7 @@
     },
     {
         "description": "Links Unten rechts Mitte",
-        "id": "o",
+        "id": "lurm",
         "pose": [
             {
                 "part": "nose",
@@ -1184,7 +1184,7 @@
     },
     {
         "description": "Links Unten rechts Unten",
-        "id": "o",
+        "id": "luru",
         "pose": [
             {
                 "part": "nose",

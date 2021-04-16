@@ -23,8 +23,9 @@ app.get("/poses", (req, res) => {
   res.json(poses);
 });
 
-app.post("/training", (req, res) => {
-  console.log("HEADERS", req.headers);
+app.post("/trainingData/:id", (req, res) => {
+  //console.log("HEADERS", req.headers);
+  console.log(req.params);
   console.log("BODY", req.body);
   // fs.WriteFileSync("asd.json", {asd})
   res.status(200).send();

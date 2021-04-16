@@ -1,38 +1,111 @@
 <script>
+    import P5 from "p5-svelte";
+    import {
+        mapSkeleton,
+        mapNormalizedToAbsolut,
+    } from "../helpers";
+
   export let pose;
 
-  $: if (pose) {
-    // console.log(pose);
-  }
+  const sketch = (p5) => {
+    p5.setup = () => {
+      p5.createCanvas(640, 480);
+    };
+
+    p5.draw = () => {
+      p5.clear();
+
+      if (pose) {
+        const _pose = mapSkeleton(mapNormalizedToAbsolut(pose, 640, 480));
+        let eyeR = _pose.rightEye;
+        let eyeL = _pose.leftEye;
+        let d = p5.dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
+        p5.fill(255, 0, 0);
+        p5.ellipse(_pose.nose.x, _pose.nose.y, d);
+
+        p5.ellipse(_pose.nose.x, _pose.nose.y, d * 2);
+        p5.fill(0, 0, 255);
+        p5.ellipse(_pose.rightWrist.x, _pose.rightWrist.y, 32);
+        p5.ellipse(_pose.leftWrist.x, _pose.leftWrist.y, 32);
+
+        p5.stroke(255, 204, 0);
+        p5.strokeWeight(5);
+
+        p5.line(
+          _pose.leftWrist.x,
+          _pose.leftWrist.y,
+          _pose.leftElbow.x,
+          _pose.leftElbow.y
+        );
+        p5.line(
+          _pose.leftElbow.x,
+          _pose.leftElbow.y,
+          _pose.leftShoulder.x,
+          _pose.leftShoulder.y
+        );
+        p5.line(
+          _pose.leftShoulder.x,
+          _pose.leftShoulder.y,
+          _pose.rightShoulder.x,
+          _pose.rightShoulder.y
+        );
+        p5.line(
+          _pose.rightShoulder.x,
+          _pose.rightShoulder.y,
+          _pose.rightElbow.x,
+          _pose.rightElbow.y
+        );
+        p5.line(
+          _pose.rightElbow.x,
+          _pose.rightElbow.y,
+          _pose.rightWrist.x,
+          _pose.rightWrist.y
+        );
+        p5.line(
+          _pose.rightShoulder.x,
+          _pose.rightShoulder.y,
+          _pose.rightHip.x,
+          _pose.rightHip.y
+        );
+        p5.line(
+          _pose.rightHip.x,
+          _pose.rightHip.y,
+          _pose.leftHip.x,
+          _pose.leftHip.y
+        );
+        p5.line(
+          _pose.leftHip.x,
+          _pose.leftHip.y,
+          _pose.leftShoulder.x,
+          _pose.leftShoulder.y
+        );
+        p5.line(
+          _pose.leftHip.x,
+          _pose.leftHip.y,
+          _pose.leftKnee.x,
+          _pose.leftKnee.y
+        );
+        p5.line(
+          _pose.leftHip.x,
+          _pose.leftHip.y,
+          _pose.leftAnkle.x,
+          _pose.leftAnkle.y
+        );
+        p5.line(
+          _pose.rightHip.x,
+          _pose.rightHip.y,
+          _pose.rightKnee.x,
+          _pose.rightKnee.y
+        );
+        p5.line(
+          _pose.rightKnee.x,
+          _pose.rightKnee.y,
+          _pose.rightAnkle.x,
+          _pose.rightAnkle.y
+        );
+      }
+    };
+  };
 </script>
 
-<div class="wrapper">
-  {#if pose}
-    {#each pose as point}
-      <div
-        class="point"
-        style={`transform: translate(${point.x * 600}px, ${point.y * 450}px);`}
-      />
-    {/each}
-  {/if}
-</div>
-
-<style>
-  .wrapper {
-    width: 600px;
-    height: 450px;
-    top: 15px;
-    position: relative;
-    margin: 0 auto;
-    border: solid thin red;
-  }
-
-  .point {
-    top: 0;
-    left: 0;
-    position: absolute;
-    width: 5px;
-    height: 5px;
-    background-color: red;
-  }
-</style>
+<P5 {sketch} />
