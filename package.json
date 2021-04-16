@@ -1,6 +1,6 @@
 {
-	"dependencies": {
-		"body-parser": "^1.19.0",
-		"p5-svelte": "^2.2.2"
-	}
+  "name": "aai-pose-net",
+  "scripts": {
+    "dev": "pnpm -r dev"
+  }
 }
