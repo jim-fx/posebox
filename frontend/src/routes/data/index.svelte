@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { createPoseDetector, throttle } from "helpers";
+  import { createPoseDetector, speak, throttle } from "helpers";
   import { onMount } from "svelte";
   import PoseDisplay from "../../components/PoseDisplay.svelte";
 
@@ -8,19 +8,12 @@
   let pose;
   let examplePose;
 
-  const synth = window.speechSynthesis;
   let poses = [];
 
-  function speak(sentence) {
-    const Audio = new SpeechSynthesisUtterance(sentence);
-    Audio.lang = "de-DE";
-    synth.speak(Audio);
-  }
-
   let currentIndex = 0;
-  let duration = 5;
-  let holdPoseDuration = 3;
-  let currentTime = duration + holdPoseDuration;
+  let prepareDuration = 5;
+  let holdPoseDuration = 5;
+  let currentTime = prepareDuration + holdPoseDuration;
   let interval;
   let savedPoses = [];
 
@@ -33,7 +26,7 @@
         if (currentTime == 0) {
           sendPoses();
           savedPoses = [];
-          currentTime = duration + holdPoseDuration;
+          currentTime = prepareDuration + holdPoseDuration;
           poses[currentIndex].pose = pose;
           currentIndex++;
           speak(poses[currentIndex].description);
@@ -53,10 +46,10 @@
     });
   };
 
-  const savePoses = throttle((savePose) => {
+  const savePoses = throttle((_pose) => {
     let temp = {
       id: poses[currentIndex].id,
-      pose: savePose,
+      pose: _pose,
     };
     savedPoses.push(temp);
   }, 200);
@@ -102,6 +95,11 @@
     <p style="font-size: larger;">{poses[currentIndex].description}</p>
   {/if}
 
+  <div
+    id="progress-bar"
+    style={`width: ${(currentTime / holdPoseDuration) * 100}%;`}
+  />
+
   {#if currentTime < holdPoseDuration}
     <p>HOLD {currentTime}</p>
   {:else}
@@ -116,9 +114,11 @@
     <PoseDisplay {pose} />
   </div>
 
-  <div id="examplePose">
-    <PoseDisplay {pose} />
-  </div>
+  {#if poses.length}
+    <div id="examplePose">
+      <PoseDisplay pose={poses[currentIndex].pose} />
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -127,6 +127,14 @@
     position: absolute;
     width: 600;
     height: 480;
+  }
+  #progress-bar {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    height: 50px;
+    background-color: white;
+    transition: width 1s linear;
   }
   #bodyTracer {
     position: absolute;
