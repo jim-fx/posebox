@@ -35,29 +35,27 @@ const isUrlCacheable = (url) => {
   return false;
 };
 
-async function handleRequest(event) {
-  const cacheType = isUrlCacheable(event.request.url);
+async function getResponse(request) {
+  const cacheType = isUrlCacheable(request.url);
 
   if (!cacheType) {
-    return self.fetch(event.request);
+    return self.fetch(request);
   }
 
-  //console.log("[SW] get " + event.request.url);
+  //console.log("[SW] get " + request.url);
 
   const cache = await caches.open(CURRENT_CACHES[cacheType]);
 
-  const cacheMatch = await cache.match(event.request);
+  const cacheMatch = await cache.match(request);
 
   if (cacheMatch) {
-    //console.log("[SW] get from cache: " + event.request.url);
+    //console.log("[SW] get from cache: " + request.url);
     return cacheMatch;
   }
 
-  const response = await self.fetch(event.request);
+  const response = await self.fetch(request);
 
-  return cache.put(event.request, response);
+  return cache.put(request, response);
 }
 
-self.addEventListener("fetch", async function (event) {
-  event.respondWith(handleRequest(event));
-});
+self.addEventListener("fetch", (e) => e.respondWith(getResponse(e.request)));
