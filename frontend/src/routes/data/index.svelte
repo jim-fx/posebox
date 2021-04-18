@@ -11,7 +11,7 @@
     let video;
     let detector;
     let pose;
-    let _pose;
+    let examplePose;
 
     const synth = window.speechSynthesis;
     let poses = [];
@@ -23,7 +23,7 @@
     }
 
     let currentIndex = 0;
-    let duration = 8;
+    let duration = 5;
     let holdPoseDuration = 3;
     let currentTime = duration + holdPoseDuration;
     let interval;
@@ -51,15 +51,19 @@
     const sendPoses = () => {
         fetch("/trainingData/" + poses[currentIndex].id, {
             method: "POST",
-            headers: {"Content-Type" : "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(savedPoses),
         }).then((response) => {
-            console.log(response);
+            // console.log(response);
         });
     };
 
     const savePoses = throttle((savePose) => {
-        savedPoses.push(savePose);
+        let temp = {
+            id: poses[currentIndex].id,
+            pose: savePose,
+        };
+        savedPoses.push(temp);
     }, 200);
 
     onMount(async () => {
@@ -86,6 +90,8 @@
             console.error(error);
         }
     });
+
+    let pose2 = pose
 </script>
 
 <h3>Training Route</h3>
@@ -113,14 +119,29 @@
         <track kind="captions" />
     </video>
 
-    <PoseDisplay {pose} />
+    <div id="bodyTracer">
+        <PoseDisplay {pose} />
+    </div>
+
+    <div id="examplePose">
+        <PoseDisplay {pose} />
+    </div>
 </div>
 
 <style>
     video {
-        transform: translateX(-50%);
+        left: 300px;
         position: absolute;
         width: 600;
         height: 480;
+    }
+    #bodyTracer {
+        position: absolute;
+        left: 300px;
+        opacity: 0.2;
+    }
+    #examplePose {
+        position: absolute;
+        left: 1000px;
     }
 </style>

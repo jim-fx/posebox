@@ -71,9 +71,6 @@ button:focus {
 }
 
 .p5Canvas {
-  z-index: 2;
-  width: 600px;
-  height: 480px;
-  transform: translate(0, 150px);
-  position: absolute;
+  position: relative;
+  bottom: 15px;
 }

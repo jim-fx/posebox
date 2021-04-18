@@ -9,14 +9,14 @@
 
   const sketch = (p5) => {
     p5.setup = () => {
-      p5.createCanvas(640, 480);
+      p5.createCanvas(600, 480);
     };
 
     p5.draw = () => {
       p5.clear();
 
       if (pose) {
-        const _pose = mapSkeleton(mapNormalizedToAbsolut(pose, 640, 480));
+        const _pose = mapSkeleton(mapNormalizedToAbsolut(pose, 600, 480));
         let eyeR = _pose.rightEye;
         let eyeL = _pose.leftEye;
         let d = p5.dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
