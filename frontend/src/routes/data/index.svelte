@@ -1,147 +1,140 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import PoseDisplay from "../../components/PoseDisplay.svelte";
-    import createPoseDetector from "../deploy/poseDetector";
-    import {
-        mapSkeleton,
-        mapNormalizedToAbsolut,
-        throttle,
-    } from "../../helpers";
+  import { createPoseDetector, throttle } from "helpers";
+  import { onMount } from "svelte";
+  import PoseDisplay from "../../components/PoseDisplay.svelte";
 
-    let video;
-    let detector;
-    let pose;
-    let examplePose;
+  let video;
+  let detector;
+  let pose;
+  let examplePose;
 
-    const synth = window.speechSynthesis;
-    let poses = [];
+  const synth = window.speechSynthesis;
+  let poses = [];
 
-    function speak(sentence) {
-        const Audio = new SpeechSynthesisUtterance(sentence);
-        Audio.lang = "de-DE";
-        synth.speak(Audio);
+  function speak(sentence) {
+    const Audio = new SpeechSynthesisUtterance(sentence);
+    Audio.lang = "de-DE";
+    synth.speak(Audio);
+  }
+
+  let currentIndex = 0;
+  let duration = 5;
+  let holdPoseDuration = 3;
+  let currentTime = duration + holdPoseDuration;
+  let interval;
+  let savedPoses = [];
+
+  function startRecording() {
+    if (interval) {
+      return;
     }
-
-    let currentIndex = 0;
-    let duration = 5;
-    let holdPoseDuration = 3;
-    let currentTime = duration + holdPoseDuration;
-    let interval;
-    let savedPoses = [];
-
-    function startRecording() {
-        if (interval) {
-            return;
+    interval = setInterval(() => {
+      if (currentIndex < poses.length) {
+        if (currentTime == 0) {
+          sendPoses();
+          savedPoses = [];
+          currentTime = duration + holdPoseDuration;
+          poses[currentIndex].pose = pose;
+          currentIndex++;
+          speak(poses[currentIndex].description);
         }
-        interval = setInterval(() => {
-            if (currentIndex < poses.length) {
-                if (currentTime == 0) {
-                    sendPoses();
-                    savedPoses = [];
-                    currentTime = duration + holdPoseDuration;
-                    poses[currentIndex].pose = pose;
-                    currentIndex++;
-                    speak(poses[currentIndex].description);
-                }
-                currentTime--;
-            }
-        }, 1000);
-    }
+        currentTime--;
+      }
+    }, 1000);
+  }
 
-    const sendPoses = () => {
-        fetch("/trainingData/" + poses[currentIndex].id, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(savedPoses),
-        }).then((response) => {
-            // console.log(response);
-        });
-    };
-
-    const savePoses = throttle((savePose) => {
-        let temp = {
-            id: poses[currentIndex].id,
-            pose: savePose,
-        };
-        savedPoses.push(temp);
-    }, 200);
-
-    onMount(async () => {
-        const response = await fetch("/poses");
-
-        poses = await response.json();
-
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: true,
-            });
-
-            video.srcObject = stream;
-
-            detector = createPoseDetector(video, (p) => {
-                if (currentTime < holdPoseDuration) {
-                    savePoses(p);
-                }
-                pose = p;
-            });
-
-            video.play();
-        } catch (error) {
-            console.error(error);
-        }
+  const sendPoses = () => {
+    fetch("/trainingData/" + poses[currentIndex].id, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(savedPoses),
+    }).then((response) => {
+      // console.log(response);
     });
+  };
 
-    let pose2 = pose
+  const savePoses = throttle((savePose) => {
+    let temp = {
+      id: poses[currentIndex].id,
+      pose: savePose,
+    };
+    savedPoses.push(temp);
+  }, 200);
+
+  onMount(async () => {
+    const response = await fetch("/poses");
+
+    poses = await response.json();
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+      });
+
+      video.srcObject = stream;
+
+      detector = createPoseDetector(video, (p) => {
+        if (currentTime < holdPoseDuration) {
+          savePoses(p);
+        }
+        pose = p;
+      });
+
+      video.play();
+    } catch (error) {
+      console.error(error);
+    }
+  });
 </script>
 
 <h3>Training Route</h3>
 
 <div class="wrapper">
-    {#if !interval}
-        <button
-            on:click={() => {
-                startRecording();
-            }}>Starte Aufnahme Session</button
-        >
-    {/if}
+  {#if !interval}
+    <button
+      on:click={() => {
+        startRecording();
+      }}>Starte Aufnahme Session</button
+    >
+  {/if}
 
-    {#if poses.length}
-        <p style="font-size: larger;">{poses[currentIndex].description}</p>
-    {/if}
+  {#if poses.length}
+    <p style="font-size: larger;">{poses[currentIndex].description}</p>
+  {/if}
 
-    {#if currentTime < holdPoseDuration}
-        <p>HOLD {currentTime}</p>
-    {:else}
-        <p>Prepare Next Position {currentTime - holdPoseDuration}</p>
-    {/if}
+  {#if currentTime < holdPoseDuration}
+    <p>HOLD {currentTime}</p>
+  {:else}
+    <p>Prepare Next Position {currentTime - holdPoseDuration}</p>
+  {/if}
 
-    <video bind:this={video} width="600" height="480">
-        <track kind="captions" />
-    </video>
+  <video bind:this={video} width="600" height="480">
+    <track kind="captions" />
+  </video>
 
-    <div id="bodyTracer">
-        <PoseDisplay {pose} />
-    </div>
+  <div id="bodyTracer">
+    <PoseDisplay {pose} />
+  </div>
 
-    <div id="examplePose">
-        <PoseDisplay {pose} />
-    </div>
+  <div id="examplePose">
+    <PoseDisplay {pose} />
+  </div>
 </div>
 
 <style>
-    video {
-        left: 300px;
-        position: absolute;
-        width: 600;
-        height: 480;
-    }
-    #bodyTracer {
-        position: absolute;
-        left: 300px;
-        opacity: 0.2;
-    }
-    #examplePose {
-        position: absolute;
-        left: 1000px;
-    }
+  video {
+    left: 300px;
+    position: absolute;
+    width: 600;
+    height: 480;
+  }
+  #bodyTracer {
+    position: absolute;
+    left: 300px;
+    opacity: 0.2;
+  }
+  #examplePose {
+    position: absolute;
+    left: 1000px;
+  }
 </style>

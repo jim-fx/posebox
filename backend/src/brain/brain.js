@@ -21,14 +21,14 @@ class Brain {
   }
 
   eachLayer(cb) {
-    this.layers.forEach(cb);
+    return this.layers.map(cb);
   }
 
   eachWeight(cb) {
     this.layers = this.layers.map((layer) => eachMatrix(layer, cb));
   }
 
-  fill(createValue) {
+  initWeights(createValue) {
     this.eachWeight(() => {
       return createValue();
     });
@@ -41,13 +41,11 @@ class Brain {
   feed(vec) {
     const activationValues = new Array(this.layers.length + 1);
 
-    activationValues[0] = transposeVector(vec);
+    // Turn Vector into matrix
+    activationValues[0] = [vec];
 
     for (let i = 0; i < this.layers.length; i++) {
       const layerWeights = this.layers[i];
-
-      console.log("Lazyer Weights");
-      console.matrix(layerWeights);
 
       //Reshape the vector into a matrix
       // from [1,2,3]
@@ -80,16 +78,14 @@ class Brain {
       /*
         because our layers have a bias neuron,
         we need to add one value to our vector to be
-        able to multiply them
-      */
-      activationValues[i] = [[1], ...activationValues[i]];
-      console.log("Activation Vector");
-      console.matrix(activationValues[i]);
+        able to multiply them with the layers
+        */
+      activationValues[i] = [[1, ...activationValues[i][0]]];
 
       // Finally multiply our vector with our layer weights
       activationValues[i + 1] = multiplyMatrix(
-        transposedLayerWeights,
-        transposeMatrix(activationValues[i])
+        activationValues[i],
+        transposedLayerWeights
       );
 
       // Apply the activation function to each value in our output vector
@@ -101,6 +97,19 @@ class Brain {
 
     // Return the activation vector of the last layer
     return activationValues[activationValues.length - 1];
+  }
+
+  calculateLoss(input, expected) {
+    // def loss(A,Y):
+    //     errorVec=Y*np.log(np.maximum(A,1e-50))+(1-Y)*np.log(np.maximum(1-A,1e-50))
+    //     error=np.sum(-errorVec)
+    //     return error
+    // def lossTheta(x,y,Theta):
+    //     # Feed the entry x to the neural network with the parameters Theta
+    //     A=feedforward(x,Theta)
+    //     # Call the loss function, feeding in the activation of the last layer and the target:
+    //     error=loss(A[-1],y)
+    //     return(error)
   }
 }
 

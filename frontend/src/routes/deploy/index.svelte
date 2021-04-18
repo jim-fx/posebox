@@ -1,8 +1,7 @@
 <script lang="ts">
+  import { createPoseDetector, throttle } from "helpers";
   import { onMount } from "svelte";
-  import createPoseDetector from "./poseDetector.js";
   import PoseDisplay from "../../components/PoseDisplay.svelte";
-  import throttle from "../../helpers/throttle";
 
   let video;
   let skeleton;
@@ -11,28 +10,7 @@
   let classifier;
 
   let pose;
-  let pose2;
-
-  // let p;
-
-  // function setup() {
-  //   console.log(p);
-  //   p.createCanvas(640, 480);
-
-  //   video = p.createCapture(p.VIDEO);
-  //   video.hide();
-  //   detector = createPoseDetector(video);
-
-  //   fetch("/training", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       Eyyyy: "false",
-  //     }),
-  //   });
-  // }
+  let remotePoses = {};
 
   onMount(async () => {
     // const video = document.createElement("video");
@@ -40,7 +18,7 @@
     const socket = io();
 
     socket.on("pose", function (msg) {
-      pose2 = msg;
+      remotePoses = { ...remotePoses, [msg.id]: msg.pose };
     });
 
     socket.on("connect", () => {
@@ -48,7 +26,10 @@
     });
 
     const sendPose = throttle((p) => {
-      socket.emit("pose", p);
+      socket.emit("pose", {
+        id: socket.id,
+        pose: p,
+      });
     }, 50);
 
     try {
@@ -71,7 +52,10 @@
 </video>
 
 <PoseDisplay {pose} />
-<PoseDisplay pose={pose2} />
+
+{#each Object.values(remotePoses) as _pose}
+  <PoseDisplay pose={_pose} />
+{/each}
 
 <style>
   video {

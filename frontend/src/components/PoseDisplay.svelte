@@ -1,9 +1,6 @@
-<script>
-    import P5 from "p5-svelte";
-    import {
-        mapSkeleton,
-        mapNormalizedToAbsolut,
-    } from "../helpers";
+<script lang="ts">
+  import { mapNormalizedToAbsolut, mapSkeleton } from "helpers";
+  import P5 from "p5-svelte";
 
   export let pose;
 
