@@ -89,45 +89,48 @@
         startRecording();
       }}>Starte Aufnahme Session</button
     >
-  {/if}
-
-  {#if poses.length}
-    <p style="font-size: larger;">{poses[currentIndex].description}</p>
-  {/if}
-
-  <div
-    id="progress-bar"
-    style={`width: ${(currentTime / holdPoseDuration) * 100}%;`}
-  />
-
-  {#if currentTime < holdPoseDuration}
-    <p>HOLD {currentTime}</p>
   {:else}
-    <p>Prepare Next Position {currentTime - holdPoseDuration}</p>
+    {#if poses.length}
+      <p style="font-size: larger;">{poses[currentIndex].description}</p>
+    {/if}
+
+    {#if currentTime < holdPoseDuration}
+      <p>HOLD {currentTime + 1}</p>
+    {:else}
+      <p>Prepare Next Position {currentTime - holdPoseDuration + 1}</p>
+    {/if}
   {/if}
 
-  <video bind:this={video} width="600" height="480">
-    <track kind="captions" />
-  </video>
-
-  <div id="bodyTracer">
-    <PoseDisplay {pose} />
-  </div>
-
-  {#if poses.length}
-    <div id="examplePose">
-      <PoseDisplay pose={poses[currentIndex].pose} />
+  <div class="inner-wrapper">
+    <div id="preview">
+      <video bind:this={video} width="600" height="480">
+        <track kind="captions" />
+      </video>
+      <div id="bodyTracer">
+        <PoseDisplay {pose} />
+      </div>
     </div>
-  {/if}
+
+    <div id="examplePose">
+      {#if poses.length}
+        <PoseDisplay pose={poses[currentIndex].pose} />
+      {/if}
+    </div>
+  </div>
 </div>
 
+<div
+  id="progress-bar"
+  style={`width: ${(currentTime / holdPoseDuration) * 100}%;`}
+/>
+
 <style>
-  video {
-    left: 300px;
-    position: absolute;
-    width: 600;
-    height: 480;
+  button {
+    width: fit-content;
+    align-self: center;
+    margin: 0 auto;
   }
+
   #progress-bar {
     position: fixed;
     bottom: 0px;
@@ -136,13 +139,26 @@
     background-color: white;
     transition: width 1s linear;
   }
+
+  #preview {
+    position: relative;
+  }
+
   #bodyTracer {
     position: absolute;
-    left: 300px;
-    opacity: 0.2;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
   }
-  #examplePose {
-    position: absolute;
-    left: 1000px;
+
+  .wrapper {
+    display: grid;
+    justify-content: center;
+  }
+
+  .inner-wrapper {
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: min-content min-content;
   }
 </style>
