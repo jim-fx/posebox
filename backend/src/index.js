@@ -1,17 +1,17 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const fs = require("fs");
-const path = require("path");
-const socketServer = require("./socket-server");
+import bodyParser from "body-parser";
+import express from "express";
+import fs from "fs";
+import http from "http";
+import path from "path";
+import { fileURLToPath } from "url";
+import { connectSocketServer } from "./socket-server.js";
 
-const http = require("http");
-const {
-  stringify
-} = require("querystring");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const server = http.createServer(app);
-socketServer.connect(server);
+connectSocketServer(server);
 
 app.use(express.static("../frontend/public"));
 
@@ -22,6 +22,7 @@ const rawJson = fs.readFileSync(
   "utf-8"
 );
 const poses = JSON.parse(rawJson);
+
 app.get("/poses", (req, res) => {
   res.json(poses);
 });
@@ -29,12 +30,11 @@ app.get("/poses", (req, res) => {
 app.post("/trainingData/:id", (req, res) => {
   //console.log("HEADERS", req.headers);
   //console.log(req.params);
-  fs.writeFileSync("./src/data/trainingData.json",
-    JSON.stringify(req.body), {
-      encoding: "utf8",
-      flag: "a+",
-      mode: 0o666
-    });
+  fs.writeFileSync("./src/data/trainingData.json", JSON.stringify(req.body), {
+    encoding: "utf8",
+    flag: "a+",
+    mode: 0o666,
+  });
   res.status(200).send();
 });
 

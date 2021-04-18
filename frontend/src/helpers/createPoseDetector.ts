@@ -20,13 +20,13 @@ export default function createPoseDetector(video, cb) {
         return p;
       });
 
-    pose = pose.keypoints.map( (p)=>{
-      return{
-        part: p.part,
-        x: p.position.x,
-        y: p.position.y
-      }
-    })
+      pose = pose.keypoints.map((p) => {
+        return {
+          part: p.part,
+          x: p.position.x,
+          y: p.position.y,
+        };
+      });
 
       cb && cb(pose);
     }

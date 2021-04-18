@@ -1,6 +1,7 @@
-const createIo = require("socket.io");
-const connect = (server) => {
-  const io = createIo(server);
+import { Server } from "socket.io";
+
+const connectSocketServer = (server) => {
+  const io = new Server(server);
 
   io.on("connection", (socket) => {
     socket.on("pose", (pose) => {
@@ -9,6 +10,4 @@ const connect = (server) => {
   });
 };
 
-module.exports = {
-  connect,
-};
+export { connectSocketServer };

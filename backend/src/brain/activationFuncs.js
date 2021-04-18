@@ -6,7 +6,4 @@ function relu(weight) {
   return Math.max(0, weight);
 }
 
-module.exports = {
-  sigmoid,
-  relu,
-};
+export { sigmoid, relu };

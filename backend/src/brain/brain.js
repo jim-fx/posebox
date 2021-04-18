@@ -1,11 +1,8 @@
-const random = require("../helpers/random");
-const createMatrix = require("../math/createMatrix");
-const eachMatrix = require("../math/eachMatrix");
-const multiplyMatrix = require("../math/multiplyMatrix");
-const printMatrix = require("../math/printMatrix");
-const transposeMatrix = require("../math/transposeMatrix");
-const transposeVector = require("../math/transposeVector");
-const activationFuncs = require("./activationFuncs");
+import createMatrix from "../math/createMatrix";
+import eachMatrix from "../math/eachMatrix";
+import multiplyMatrix from "../math/multiplyMatrix";
+import transposeMatrix from "../math/transposeMatrix";
+import activationFuncs from "./activationFuncs";
 
 class Brain {
   constructor(dimensions) {

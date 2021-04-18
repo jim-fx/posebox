@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@poser/skelly': workspace:*
   '@tensorflow/tfjs-node': ^3.4.0
   body-parser: ^1.19.0
   express: ^4.17.1
@@ -9,6 +10,7 @@ specifiers:
   socket.io: ^4.0.1
 
 dependencies:
+  '@poser/skelly': link:../packages/skelly
   '@tensorflow/tfjs-node': 3.4.0
   body-parser: 1.19.0
   express: 4.17.1

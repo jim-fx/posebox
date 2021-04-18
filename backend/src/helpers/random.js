@@ -24,9 +24,4 @@ function int(min, max) {
   return () => Math.floor(min + Math.random() * max);
 }
 
-module.exports = {
-  int,
-  xavier,
-  uniform,
-  uniformp,
-};
+export { int, xavier, uniform, uniformp };

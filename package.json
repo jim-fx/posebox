@@ -1,6 +1,6 @@
 {
-  "name": "aai-pose-net",
+  "name": "poser",
   "scripts": {
-    "dev": "pnpm -r dev"
+    "dev": "pnpm -r --parallel dev"
   }
 }

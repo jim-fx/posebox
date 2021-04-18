@@ -1,10 +1,9 @@
 // shamelessly copied from:
 // https://stackoverflow.com/a/27205341
 
-const createMatrix = require("./createMatrix");
-const printMatrix = require("./printMatrix");
+import createMatrix from "./createMatrix";
 
-module.exports = (matA, matB) => {
+export default (matA, matB) => {
   const matARows = matA.length;
   const matACols = matA[0].length;
   const matBRows = matB.length;
