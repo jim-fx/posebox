@@ -17,10 +17,10 @@ app.get("/poses", async (req, res) => {
   res.json(poses);
 });
 
-app.post("/trainingData/:id", (req, res) => {
+app.post("/trainingData", (req, res) => {
   addTrainingPose(req.body)
     .then(() => res.status(200).send("Poses saved"))
-    .catch(() => res.status(500).send("Error saving poses"));
+    .catch((err) => {console.log(err); res.status(500).send("Error saving poses")});
 });
 
 server.listen(8080, () => {

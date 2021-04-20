@@ -6,7 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const createDB = async (fileName) => {
   const path = resolve(__dirname + `/data/${fileName}.json`);
-  let data = {};
+  let data = [];
   try {
     const file = await readFile(path, "utf-8");
     data = JSON.parse(file);
