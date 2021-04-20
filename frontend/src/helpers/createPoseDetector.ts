@@ -1,4 +1,5 @@
 import type ml5 from "ml5";
+import { compressPose } from "@poser/skelly"
 
 export default function createPoseDetector(video, cb) {
   let pose;
@@ -27,6 +28,8 @@ export default function createPoseDetector(video, cb) {
           y: p.position.y,
         };
       });
+
+      pose = compressPose(pose);
 
       cb && cb(pose);
     }

@@ -2,7 +2,7 @@
   import { createPoseDetector, speak, throttle } from "helpers";
   import { onMount } from "svelte";
   import PoseDisplay from "../../components/PoseDisplay.svelte";
-  import {compressSkeleton} from "@poser/skelly";
+  import {compressPose} from "@poser/skelly";
 
   let video;
   let detector;
@@ -46,10 +46,9 @@
   };
 
   const savePoses = throttle((_pose) => {
-      let compress = compressSkeleton(_pose)
     let temp = {
       id: poses[currentIndex].id,
-      pose: compress,
+      pose: _pose,
     };
     savedPoses.push(temp);
   }, 200);

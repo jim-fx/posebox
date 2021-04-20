@@ -4,11 +4,7 @@
   import P5 from "p5-svelte";
 
   export let pose;
-
-  $: if (!Number.isNaN(pose[0])) {
-    pose = decompressPose(pose);
-  }
-
+  $:normalizedPose = pose&&decompressPose(mapNormalizedToAbsolut(pose, 600, 480));
   const sketch = (p5) => {
     p5.setup = () => {
       p5.createCanvas(600, 480);
@@ -16,9 +12,8 @@
 
     p5.draw = () => {
       p5.clear();
-
-      if (pose) {
-        const _pose = mapSkeleton(mapNormalizedToAbsolut(pose, 600, 480));
+      if (normalizedPose) {
+        const _pose = normalizedPose;
         let eyeR = _pose.rightEye;
         let eyeL = _pose.leftEye;
         let d = p5.dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);

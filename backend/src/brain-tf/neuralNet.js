@@ -25,7 +25,12 @@ testSetExpected = tf.tensor([
 
 createNeuralNet();
 initializingTrainingSet();
-train().then(neuralNet.predict(testSetInput).print());
+
+setInterval(function(){
+    train().then(neuralNet.predict(testSetInput).print());
+}, 1000);
+
+
 
 
 
@@ -64,16 +69,19 @@ function createNeuralNet() {
 function initializingTrainingSet() {
     let training = [];
     let testing = [];
+    
+    // let training = [];
+    // let testing = [];
 
-    for (let i = 0; i < 1000; i++) {
-        let x = Math.floor(Math.abs(Math.random() * 100));
-        let y = Math.floor(Math.abs(Math.random() * 100));
-        let z = Math.sqrt(x * x + y * y);
+    // for (let i = 0; i < 1000; i++) {
+    //     let x = Math.floor(Math.abs(Math.random() * 100));
+    //     let y = Math.floor(Math.abs(Math.random() * 100));
+    //     let z = Math.sqrt(x * x + y * y);
 
-        training.push([x, y]);
-        testing.push(z);
-    }
+    //     training.push([x, y]);
+    //     testing.push(z);
+    // }
 
-    trainingSet = tf.tensor(training);
-    validationSet = tf.tensor(testing);
+    // trainingSet = tf.tensor(training);
+    // validationSet = tf.tensor(testing);
 }
