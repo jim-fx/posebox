@@ -1,8 +1,7 @@
-import createMatrix from "../math/createMatrix";
-import eachMatrix from "../math/eachMatrix";
-import multiplyMatrix from "../math/multiplyMatrix";
-import transposeMatrix from "../math/transposeMatrix";
-import activationFuncs from "./activationFuncs";
+import activationFuncs from "./activationFuncs.js";
+import createMatrix from "./math/createMatrix.js";
+import eachMatrix from "./math/eachMatrix.js";
+import multiplyVectorMatrix from "./math/multiplyVectorMatrix.js";
 
 class Brain {
   constructor(dimensions) {
@@ -11,10 +10,27 @@ class Brain {
     this.layers = new Array(dimensions.length - 1);
 
     for (let i = 0; i < dimensions.length - 1; i++) {
-      const layerHeight = dimensions[i];
+      // The plus one is for the bias neuron
+      const layerHeight = dimensions[i] + 1;
       const nextLayerHeight = dimensions[i + 1];
-      this.layers[i] = createMatrix(layerHeight + 1, nextLayerHeight);
+      this.layers[i] = createMatrix(layerHeight, nextLayerHeight);
     }
+
+    console.log("New Brain:");
+    let maxHeight = Math.max(...this.dimensions);
+
+    let layers = createMatrix(this.dimensions.length, maxHeight).map((row, y) =>
+      row.map((_, x) => {
+        if (y < this.dimensions[x]) {
+          return "X";
+        }
+        return " ";
+      })
+    );
+
+    layers = [[...this.dimensions], ...layers];
+
+    console.matrix(layers);
   }
 
   eachLayer(cb) {
@@ -26,9 +42,7 @@ class Brain {
   }
 
   initWeights(createValue) {
-    this.eachWeight(() => {
-      return createValue();
-    });
+    this.eachWeight(createValue);
   }
 
   setActivationFunction(func) {
@@ -38,38 +52,10 @@ class Brain {
   feed(vec) {
     const activationValues = new Array(this.layers.length + 1);
 
-    // Turn Vector into matrix
-    activationValues[0] = [vec];
+    activationValues[0] = vec;
 
     for (let i = 0; i < this.layers.length; i++) {
       const layerWeights = this.layers[i];
-
-      //Reshape the vector into a matrix
-      // from [1,2,3]
-      /* into [
-        [1],
-        [2],
-        [3]
-      ]*/
-
-      //activationValues[i] = transposeVector(activationValues[i]);
-
-      //Reshape layer to fit
-      /*
-        from
-        [
-          [1,2,3],
-          [4,5,6]
-        ]
-
-        to
-        [
-          [1,4],
-          [2,5],
-          [3,6]
-        ]
-      */
-      const transposedLayerWeights = transposeMatrix(layerWeights);
 
       //Add bias to vector
       /*
@@ -77,12 +63,12 @@ class Brain {
         we need to add one value to our vector to be
         able to multiply them with the layers
         */
-      activationValues[i] = [[1, ...activationValues[i][0]]];
+      activationValues[i] = [1, ...activationValues[i]];
 
-      // Finally multiply our vector with our layer weights
-      activationValues[i + 1] = multiplyMatrix(
-        activationValues[i],
-        transposedLayerWeights
+      // Multiply our vector with our layer weights
+      activationValues[i + 1] = multiplyVectorMatrix(
+        layerWeights,
+        activationValues[i]
       );
 
       // Apply the activation function to each value in our output vector
@@ -96,18 +82,66 @@ class Brain {
     return activationValues[activationValues.length - 1];
   }
 
+  calculateLossVector(input, expected) {
+    const output = this.feed(input);
+
+    if (output.length !== expected.length) {
+      throw new Error(
+        `Ouput length (${output.length}) and expected length (${expected.length}) don't match!`
+      );
+    }
+
+    return output.map((out, i) => {
+      return Math.pow(out - expected[i], 2) / 2;
+    });
+  }
+
   calculateLoss(input, expected) {
-    // def loss(A,Y):
-    //     errorVec=Y*np.log(np.maximum(A,1e-50))+(1-Y)*np.log(np.maximum(1-A,1e-50))
-    //     error=np.sum(-errorVec)
-    //     return error
-    // def lossTheta(x,y,Theta):
-    //     # Feed the entry x to the neural network with the parameters Theta
-    //     A=feedforward(x,Theta)
-    //     # Call the loss function, feeding in the activation of the last layer and the target:
-    //     error=loss(A[-1],y)
-    //     return(error)
+    const errorVec = this.calculateLossVector(input, expected);
+    return errorVec.reduce((a, b) => a + b);
+  }
+
+  deltaPrevActivityOnZ(layerIndex, currentNodeIndex, prevNodeIndex) {
+    return this.layers[layerIndex][currentNodeIndex][prevNodeIndex];
+  }
+
+  deltaWeightOnZ(layerIndex, weightIndex) {
+    if (layerIndex !== 0) {
+      return this.network.layers[layerIndex - 1].nodes[weightIndex].activity;
+    } else {
+      return (this.network.input && this.network.input[weightIndex]) || 0;
+    }
+  }
+
+  createDeltaMatrix() {
+    const output = new Array(this.dimensions.length);
+
+    for (let i = 0; i < this.dimensions.length - 1; i++) {
+      const layerWeights = this.dimensions[i];
+      const nextLayerHeight = this.dimensions[i + 1];
+
+      output[i] = new Array(layerWeights).map((node) => {
+        return {
+          bias: 0,
+          weights: new Array(nextLayerHeight),
+        };
+      });
+    }
+
+    return output;
+  }
+
+  train(input, output) {
+    // This array of matrices will store the changes
+    // to the weights and biases
+    const deltaMatrix = this.createDeltaMatrix();
+
+    console.log(deltaMatrix);
+
+    for (let i = this.layers.length - 1; i >= 0; i--) {
+      const layer = this.layers[i];
+    }
   }
 }
 
-module.exports = Brain;
+export default Brain;

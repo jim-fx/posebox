@@ -6,4 +6,4 @@ function relu(weight) {
   return Math.max(0, weight);
 }
 
-export { sigmoid, relu };
+export default { sigmoid, relu };
