@@ -1,9 +1,18 @@
-import activationFuncs from "./activationFuncs.js";
-import createMatrix from "./math/createMatrix.js";
-import eachMatrix from "./math/eachMatrix.js";
-import multiplyVectorMatrix from "./math/multiplyVectorMatrix.js";
+import activationFuncs from "./activationFuncs";
+import createMatrix from "./math/createMatrix";
+import eachMatrix from "./math/eachMatrix";
+import multiplyMatrix from "./math/multiplyMatrix";
+import multiplyVectorMatrix from "./math/multiplyVectorMatrix";
+import printMatrix from "./math/printMatrix";
+import transposeMatrix from "./math/transposeMatrix";
+import transposeVector from "./math/transposeVector";
 
 class Brain {
+  dimensions: number[];
+  activationFunction: (v: number) => number;
+
+  layers: number[][][];
+
   constructor(dimensions) {
     this.dimensions = dimensions;
     this.activationFunction = activationFuncs.sigmoid;
@@ -16,21 +25,27 @@ class Brain {
       this.layers[i] = createMatrix(layerHeight, nextLayerHeight);
     }
 
-    console.log("New Brain:");
+    console.log("New Brain, who dis?:");
+    console.log(...this.dimensions);
+  }
+
+  print() {
+    console.log("New Brain, who dis?:");
     let maxHeight = Math.max(...this.dimensions);
 
-    let layers = createMatrix(this.dimensions.length, maxHeight).map((row, y) =>
-      row.map((_, x) => {
-        if (y < this.dimensions[x]) {
-          return "X";
-        }
-        return " ";
-      })
+    let layers: any[][] = createMatrix(this.dimensions.length, maxHeight).map(
+      (row, y) =>
+        row.map((_, x) => {
+          if (y < this.dimensions[x]) {
+            return "X";
+          }
+          return " ";
+        })
     );
 
     layers = [[...this.dimensions], ...layers];
 
-    console.matrix(layers);
+    printMatrix(layers);
   }
 
   eachLayer(cb) {
@@ -65,9 +80,11 @@ class Brain {
         */
       activationValues[i] = [1, ...activationValues[i]];
 
+      const transposedLayerWeights = transposeMatrix(layerWeights);
+
       // Multiply our vector with our layer weights
       activationValues[i + 1] = multiplyVectorMatrix(
-        layerWeights,
+        transposedLayerWeights,
         activationValues[i]
       );
 
@@ -82,7 +99,7 @@ class Brain {
     return activationValues[activationValues.length - 1];
   }
 
-  calculateLossVector(input, expected) {
+  calculateError(input, expected) {
     const output = this.feed(input);
 
     if (output.length !== expected.length) {
@@ -97,50 +114,41 @@ class Brain {
   }
 
   calculateLoss(input, expected) {
-    const errorVec = this.calculateLossVector(input, expected);
+    const errorVec = this.calculateError(input, expected);
     return errorVec.reduce((a, b) => a + b);
   }
 
-  deltaPrevActivityOnZ(layerIndex, currentNodeIndex, prevNodeIndex) {
-    return this.layers[layerIndex][currentNodeIndex][prevNodeIndex];
-  }
+  train(input, expected) {
+    const guess = this.feed(input);
 
-  deltaWeightOnZ(layerIndex, weightIndex) {
-    if (layerIndex !== 0) {
-      return this.network.layers[layerIndex - 1].nodes[weightIndex].activity;
-    } else {
-      return (this.network.input && this.network.input[weightIndex]) || 0;
-    }
-  }
+    const errorVec = guess.map((out, i) => {
+      return Math.pow(out - expected[i], 2) / 2;
+    });
 
-  createDeltaMatrix() {
-    const output = new Array(this.dimensions.length);
+    console.log("INPUT", input);
+    console.log("EXPECTED", expected);
+    console.log("e1: ", errorVec);
 
-    for (let i = 0; i < this.dimensions.length - 1; i++) {
-      const layerWeights = this.dimensions[i];
-      const nextLayerHeight = this.dimensions[i + 1];
-
-      output[i] = new Array(layerWeights).map((node) => {
-        return {
-          bias: 0,
-          weights: new Array(nextLayerHeight),
-        };
-      });
-    }
-
-    return output;
-  }
-
-  train(input, output) {
-    // This array of matrices will store the changes
-    // to the weights and biases
-    const deltaMatrix = this.createDeltaMatrix();
-
-    console.log(deltaMatrix);
+    const errors = new Array(this.layers.length + 1);
+    errors[errors.length - 1] = errorVec;
+    const biases = [];
 
     for (let i = this.layers.length - 1; i >= 0; i--) {
       const layer = this.layers[i];
+
+      const transposedError = transposeVector(errors[i + 1]);
+
+      const err = multiplyMatrix(layer, transposedError)[0];
+
+      //First element in the array is the bias
+      // We need to remove it so we can perform
+      // the matrix multiplication in the next layer
+      biases[i] = err.shift();
+      errors[i] = err;
     }
+
+    console.log("ERRORS", errors);
+    console.log("BIASES", biases);
   }
 }
 
