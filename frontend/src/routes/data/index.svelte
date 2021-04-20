@@ -2,11 +2,11 @@
   import { createPoseDetector, speak, throttle } from "helpers";
   import { onMount } from "svelte";
   import PoseDisplay from "../../components/PoseDisplay.svelte";
+  import {compressSkeleton} from "@poser/skelly";
 
   let video;
   let detector;
   let pose;
-  let examplePose;
 
   let poses = [];
 
@@ -37,19 +37,19 @@
   }
 
   const sendPoses = () => {
-    fetch("/trainingData/" + poses[currentIndex].id, {
+    fetch("/trainingData", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(savedPoses),
     }).then((response) => {
-      // console.log(response);
     });
   };
 
   const savePoses = throttle((_pose) => {
+      let compress = compressSkeleton(_pose)
     let temp = {
       id: poses[currentIndex].id,
-      pose: _pose,
+      pose: compress,
     };
     savedPoses.push(temp);
   }, 200);
@@ -90,6 +90,7 @@
       }}>Starte Aufnahme Session</button
     >
   {:else}
+
     {#if poses.length}
       <p style="font-size: larger;">{poses[currentIndex].description}</p>
     {/if}
