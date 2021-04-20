@@ -32,7 +32,7 @@
           speak(poses[currentIndex].description);
         }
         currentTime--;
-      }
+      }   
     }, 1000);
   }
 
