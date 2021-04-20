@@ -1,9 +1,15 @@
+import printMatrix from "math/printMatrix.js";
 import activationFuncs from "./activationFuncs.js";
 import createMatrix from "./math/createMatrix.js";
 import eachMatrix from "./math/eachMatrix.js";
 import multiplyVectorMatrix from "./math/multiplyVectorMatrix.js";
 
 class Brain {
+  dimensions: number[];
+  activationFunction: (v: number) => number;
+
+  layers: number[][][];
+
   constructor(dimensions) {
     this.dimensions = dimensions;
     this.activationFunction = activationFuncs.sigmoid;
@@ -19,18 +25,19 @@ class Brain {
     console.log("New Brain:");
     let maxHeight = Math.max(...this.dimensions);
 
-    let layers = createMatrix(this.dimensions.length, maxHeight).map((row, y) =>
-      row.map((_, x) => {
-        if (y < this.dimensions[x]) {
-          return "X";
-        }
-        return " ";
-      })
+    let layers: any[][] = createMatrix(this.dimensions.length, maxHeight).map(
+      (row, y) =>
+        row.map((_, x) => {
+          if (y < this.dimensions[x]) {
+            return "X";
+          }
+          return " ";
+        })
     );
 
     layers = [[...this.dimensions], ...layers];
 
-    console.matrix(layers);
+    printMatrix(layers);
   }
 
   eachLayer(cb) {
@@ -82,7 +89,7 @@ class Brain {
     return activationValues[activationValues.length - 1];
   }
 
-  calculateLossVector(input, expected) {
+  calculateErrorVector(input, expected) {
     const output = this.feed(input);
 
     if (output.length !== expected.length) {
@@ -97,46 +104,33 @@ class Brain {
   }
 
   calculateLoss(input, expected) {
-    const errorVec = this.calculateLossVector(input, expected);
+    const errorVec = this.calculateErrorVector(input, expected);
     return errorVec.reduce((a, b) => a + b);
   }
 
-  deltaPrevActivityOnZ(layerIndex, currentNodeIndex, prevNodeIndex) {
-    return this.layers[layerIndex][currentNodeIndex][prevNodeIndex];
-  }
-
-  deltaWeightOnZ(layerIndex, weightIndex) {
-    if (layerIndex !== 0) {
-      return this.network.layers[layerIndex - 1].nodes[weightIndex].activity;
-    } else {
-      return (this.network.input && this.network.input[weightIndex]) || 0;
-    }
-  }
-
   createDeltaMatrix() {
-    const output = new Array(this.dimensions.length);
+    const deltaMatrix = new Array(this.dimensions.length - 1);
 
     for (let i = 0; i < this.dimensions.length - 1; i++) {
       const layerWeights = this.dimensions[i];
       const nextLayerHeight = this.dimensions[i + 1];
 
-      output[i] = new Array(layerWeights).map((node) => {
+      deltaMatrix[i] = new Array(layerWeights).fill(null).map((node) => {
         return {
           bias: 0,
-          weights: new Array(nextLayerHeight),
+          weights: new Array(nextLayerHeight).fill(null).map(() => 0),
         };
       });
     }
 
-    return output;
+    return deltaMatrix;
   }
 
-  train(input, output) {
+  train(input, expected) {
     // This array of matrices will store the changes
     // to the weights and biases
     const deltaMatrix = this.createDeltaMatrix();
-
-    console.log(deltaMatrix);
+    const outputVec = this.calculateErrorVector(input, expected);
 
     for (let i = this.layers.length - 1; i >= 0; i--) {
       const layer = this.layers[i];

@@ -1,7 +1,9 @@
+import printMatrix from "./printMatrix";
+
 export default (mat, vec) => {
   if (mat[0].length != vec.length) {
-    console.matrix(mat);
-    console.matrix(vec);
+    printMatrix(mat);
+    printMatrix(vec);
     console.error("Cant multiply that mat and vec");
   }
 
