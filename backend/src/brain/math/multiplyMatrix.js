@@ -1,7 +1,7 @@
 // shamelessly copied from:
 // https://stackoverflow.com/a/27205341
 
-import createMatrix from "./createMatrix";
+import createMatrix from "./createMatrix.js";
 
 export default (matA, matB) => {
   const matARows = matA.length;

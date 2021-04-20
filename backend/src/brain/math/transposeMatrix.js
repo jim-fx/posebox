@@ -1,4 +1,4 @@
-import createMatrix from "./createMatrix";
+import createMatrix from "./createMatrix.js";
 
 export default function (m) {
   const output = createMatrix(m.length, m[0].length);
