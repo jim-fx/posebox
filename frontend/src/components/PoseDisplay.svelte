@@ -1,8 +1,13 @@
 <script lang="ts">
-  import { mapNormalizedToAbsolut, mapSkeleton } from "../helpers";
+  import { decompressPose } from "@poser/skelly";
+  import { mapNormalizedToAbsolut, mapSkeleton } from "helpers";
   import P5 from "p5-svelte";
 
   export let pose;
+
+  $: if (!Number.isNaN(pose[0])) {
+    pose = decompressPose(pose);
+  }
 
   const sketch = (p5) => {
     p5.setup = () => {
