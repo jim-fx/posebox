@@ -1,7 +1,7 @@
-import createMatrix from "./createMatrix.js";
+import createMatrix from "./createMatrix";
 
 export default function (m) {
-  const output = createMatrix(m.length, m[0].length);
+  const output = createMatrix(m[0].length, m.length);
 
   m.forEach((row, y) => {
     row.forEach((cell, x) => {

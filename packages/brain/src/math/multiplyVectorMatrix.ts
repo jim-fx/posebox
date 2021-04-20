@@ -2,9 +2,9 @@ import printMatrix from "./printMatrix";
 
 export default (mat, vec) => {
   if (mat[0].length != vec.length) {
+    console.error("Cant multiply that mat and vec:");
     printMatrix(mat);
     printMatrix(vec);
-    console.error("Cant multiply that mat and vec");
   }
 
   const output = new Array(mat.length).fill(null).map(() => 0);

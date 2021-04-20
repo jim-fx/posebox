@@ -1,7 +1,8 @@
-import activationFuncs from "./activationFuncs.js";
-import Brain from "./brain.js";
-import random from "./helpers/random.js";
-import printMatrix from "./math/printMatrix.js";
+import activationFuncs from "./activationFuncs";
+import Brain from "./brain";
+import random from "./helpers/random";
+
+console.clear();
 
 const b = new Brain([3, 5, 5, 3]);
 
@@ -9,7 +10,7 @@ b.setActivationFunction(activationFuncs.relu);
 
 b.initWeights(random.uniformp);
 
-b.eachLayer(printMatrix);
+//b.eachLayer(printMatrix);
 
 // [
 //   [1, 2, 3],
