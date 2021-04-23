@@ -4,13 +4,15 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
+    "build": "esbuild src/index.ts --outdir=dist --bundle --format=esm",
     "dev": "esbuild src/index.ts --outdir=dist --bundle --watch --format=esm",
     "watch": "nodemon --watch src --exec ts-node src/index.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
+    "esbuild": "^0.11.13",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
   }
