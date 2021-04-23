@@ -34,7 +34,22 @@ export default function visualizeSelection(prediction) {
     finalArray.push(finalRow);
   }
 
+  finalArray.forEach((row, y) =>
+    console.log(
+      row
+        .map((cell, x) => {
+          if (cell && x == y) {
+            return "\x1b[42m 1";
+          } else if (cell) {
+            return "\x1b[41m 1";
+          }
+          return "\x1b[0m 0";
+        })
+        .join(" ") + "\x1b[0m"
+    )
+  );
+
   let finalTensor = tf.tensor(finalArray);
-  finalTensor.print();
+  //finalTensor.print();
   console.log("Correct Guesses: " + correctGuesses);
 }
