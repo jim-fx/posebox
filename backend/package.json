@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src"
+    "dev": "nodemon --delay 2 src"
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,5 @@
 import tf from "@tensorflow/tfjs-node";
+import { readFile } from "fs/promises";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { getAllPoses, getAllTrainingPoses } from "../database/index.js";
@@ -9,6 +10,9 @@ import visualizeSelection from "./helpers/visualizeSelection.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+/**
+ * @type tf.Sequential
+ */
 let neuralNet;
 let trainingSet;
 let validationSet;
@@ -53,7 +57,7 @@ async function train() {
 
   const currentIteration = {
     loss,
-    prediction,
+    prediction: prediction.arraySync(),
     duration: b - a,
   };
 
@@ -159,14 +163,27 @@ function getIterations() {
   return JSON.parse(JSON.stringify(iterations));
 }
 
-function getInfo() {
+async function getInfo() {
   const info = { ...options };
   info.currentTime = Date.now();
-  info.summary = neuralNet.summary();
+  try {
+    const rawSummary = await readFile(
+      resolve(__dirname, "weights/model.json"),
+      "utf-8"
+    );
+    info.summary = JSON.parse(rawSummary);
+    console.log(info.summary);
+  } catch (error) {
+    console.log(error);
+  }
   info.duration = info.currentTime - info.startTime;
   return info;
 }
 
+function getWeights() {
+  return neuralNet.getWeights(true).map((w) => w.arraySync());
+}
+
 init();
 
-export default { getIterations, getInfo };
+export default { getIterations, getInfo, getWeights };

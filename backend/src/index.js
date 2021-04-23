@@ -19,12 +19,18 @@ app.get("/poses", async (req, res) => {
   res.json(poses);
 });
 
-app.get("/brain/info", (req, res) => {
-  res.json(brain.getInfo());
+app.use("/brain/model", express.static("./brain/weights"));
+
+app.get("/brain/info", async (req, res) => {
+  res.json(await brain.getInfo());
 });
 
 app.get("/brain/iterations", (req, res) => {
   res.json(brain.getIterations());
+});
+
+app.get("/brain/weights", async (req, res) => {
+  res.json(await brain.getWeights());
 });
 
 app.post("/trainingData", (req, res) => {
