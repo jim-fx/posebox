@@ -1,12 +1,14 @@
 import bodyParser from "body-parser";
 import express from "express";
 import http from "http";
+import brain from "./brain/index.js";
 import { addTrainingPose, getAllPoses } from "./database/index.js";
-import { connectSocketServer } from "./socket-server.js";
+import socket from "./socket-server.js";
 
 const app = express();
 const server = http.createServer(app);
-connectSocketServer(server);
+
+socket.connectTo(server);
 
 app.use(express.static("../frontend/public"));
 
@@ -17,10 +19,21 @@ app.get("/poses", async (req, res) => {
   res.json(poses);
 });
 
+app.get("/brain/info", (req, res) => {
+  res.json(brain.getInfo());
+});
+
+app.get("/brain/iterations", (req, res) => {
+  res.json(brain.getIterations());
+});
+
 app.post("/trainingData", (req, res) => {
   addTrainingPose(req.body)
     .then(() => res.status(200).send("Poses saved"))
-    .catch((err) => {console.log(err); res.status(500).send("Error saving poses")});
+    .catch((err) => {
+      console.log(err);
+      res.status(500).send("Error saving poses");
+    });
 });
 
 server.listen(8080, () => {

@@ -13,7 +13,7 @@ class Brain {
 
   layers: number[][][];
 
-  constructor(dimensions) {
+  constructor(dimensions: number[]) {
     this.dimensions = dimensions;
     this.activationFunction = activationFuncs.sigmoid;
     this.layers = new Array(dimensions.length - 1);

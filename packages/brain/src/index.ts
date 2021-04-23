@@ -21,3 +21,5 @@ b.initWeights(random.uniformp);
 // });
 
 b.train([1, 2, 3], [1, 2, 3]);
+
+export default { Brain };

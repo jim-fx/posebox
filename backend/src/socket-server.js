@@ -1,13 +1,26 @@
 import { Server } from "socket.io";
 
-const connectSocketServer = (server) => {
-  const io = new Server(server);
+let _resolveIo;
+const io = new Promise((res) => {
+  _resolveIo = res;
+});
 
-  io.on("connection", (socket) => {
+const connectTo = (server) => {
+  const _io = new Server(server);
+
+  console.log("server");
+
+  _io.on("connection", (socket) => {
     socket.on("pose", (pose) => {
       socket.broadcast.emit("pose", pose);
     });
   });
+
+  _resolveIo(_io);
 };
 
-export { connectSocketServer };
+async function send(eventType, msg) {
+  (await io).local.emit(eventType, msg);
+}
+
+export default { connectTo, send };

@@ -1,31 +1,76 @@
-import tf from "@tensorflow/tfjs";
+import tf from "@tensorflow/tfjs-node";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 import { getAllPoses, getAllTrainingPoses } from "../database/index.js";
+import socket from "../socket-server.js";
 import createIdentityMatrix from "./helpers/createIdentityMatrix.js";
+import shuffleArray from "./helpers/shuffleArray.js";
 import visualizeSelection from "./helpers/visualizeSelection.js";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let neuralNet;
 let trainingSet;
 let validationSet;
 let testSetInput;
 
+const options = {
+  batchSize: 20,
+  epochs: 10,
+  verbose: 0,
+  learningRate: 0.05,
+  startTime: Date.now(),
+};
+
+// Keep track of the learning process here;
+const iterations = [];
+
 async function train() {
-  const setup = {
-    epochs: 50,
-  };
-  const answer = await neuralNet.fit(trainingSet, validationSet, setup);
+  const a = Date.now();
+
+  const answer = await neuralNet.fit(trainingSet, validationSet, options);
 
   const prediction = neuralNet.predict(testSetInput);
 
-  visualizeSelection(prediction);
-  console.log(answer.history.loss[0]);
-  //prediction.print();
+  console.log("Current Iteration ", iterations.length);
 
-  train();
+  visualizeSelection(prediction);
+
+  const loss = answer.history.loss[0];
+
+  console.log("Loss: ", loss);
+
+  const b = Date.now();
+
+  // Save the weights on each 10 iteration
+  if ((iterations.length + 1) % 10 === 0) {
+    const res = await neuralNet.save(
+      `file://${resolve(__dirname, "./weights")}`
+    );
+    console.log("Save neural net");
+    console.log(res);
+  }
+
+  const currentIteration = {
+    loss,
+    prediction,
+    duration: b - a,
+  };
+
+  iterations.push(currentIteration);
+
+  socket.send("brain.status", currentIteration);
+
+  if (loss) {
+    train();
+  } else {
+    console.log("We seem to have a problem here");
+  }
 }
 
 function createNeuralNet() {
   const neuralNet = tf.sequential();
-  const adamOpt = tf.train.sgd(0.002);
+  const adamOpt = tf.train.sgd(0.05);
 
   neuralNet.add(
     tf.layers.dense({
@@ -35,15 +80,16 @@ function createNeuralNet() {
   );
   neuralNet.add(
     tf.layers.dense({
-      units: 25,
+      units: 50,
     })
   );
 
   neuralNet.add(
     tf.layers.dense({
-      units: 20,
+      units: 50,
     })
   );
+
   neuralNet.add(
     tf.layers.dense({
       units: 13,
@@ -59,10 +105,12 @@ function createNeuralNet() {
 }
 
 async function initializingTrainingSets() {
-  let trainingData = await getAllTrainingPoses();
-  let allPoses = await getAllPoses();
+  const trainingData = shuffleArray(await getAllTrainingPoses());
+  const allPoses = await getAllPoses();
 
-  let training = trainingData.map((pose) => pose.pose);
+  const training = trainingData.map((pose) => pose.pose);
+
+  console.log("Loading " + trainingData.length + " poses");
 
   // Create a matrix of the format
   /**
@@ -86,7 +134,6 @@ async function initializingTrainingSets() {
   trainingSet = tf.tensor2d(training);
 
   let testSetTemp = allPoses.map((pose) => pose.pose);
-
   testSetInput = tf.tensor2d(testSetTemp);
 
   // console.log("validationSet")
@@ -98,10 +145,28 @@ async function initializingTrainingSets() {
   // console.log(allPoses)
 }
 
-(async function () {
+async function init() {
+  if (neuralNet) return;
+
   await initializingTrainingSets();
 
   neuralNet = createNeuralNet();
 
   train();
-})();
+}
+
+function getIterations() {
+  return JSON.parse(JSON.stringify(iterations));
+}
+
+function getInfo() {
+  const info = { ...options };
+  info.currentTime = Date.now();
+  info.summary = neuralNet.summary();
+  info.duration = info.currentTime - info.startTime;
+  return info;
+}
+
+init();
+
+export default { getIterations, getInfo };

@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "esbuild src/index.ts --outdir=dist --bundle --format=esm",
+    "build": "esbuild src/index.ts --outdir=dist --bundle --format=esm && tsc --declaration --emitDeclarationOnly",
     "dev": "esbuild src/index.ts --outdir=dist --bundle --watch --format=esm",
     "watch": "nodemon --watch src --exec ts-node src/index.ts"
   },
