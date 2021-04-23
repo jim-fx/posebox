@@ -1,5 +1,3 @@
-import tf from "@tensorflow/tfjs";
-
 export default function visualizeSelection(prediction) {
   let arrayPrediction = [];
 
@@ -49,7 +47,5 @@ export default function visualizeSelection(prediction) {
     )
   );
 
-  let finalTensor = tf.tensor(finalArray);
-  //finalTensor.print();
   console.log("Correct Guesses: " + correctGuesses);
 }
