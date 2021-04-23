@@ -8,7 +8,7 @@ import {
 } from "../database/index.js"
 
 let neuralNet = tf.sequential();
-const adamOpt = tf.train.adam(0.3);
+const adamOpt = tf.train.sgd(0.002);
 
 var trainingSet;
 let validationSet;
@@ -34,13 +34,85 @@ let testSetExpected = tf.tensor([
 createNeuralNet();
 initializingTrainingSets();
 
-
+let prediction
 
 setInterval(function () {
-    train().then(neuralNet.predict(testSetInput).print());
-
-
+    train().then(
+        prediction = neuralNet.predict(testSetInput),
+        visualizeSelection(prediction),
+        prediction.print()
+    );
 }, 1000);
+
+async function train() {
+    let setup = {
+        epochs: 10
+    }
+    let answer = await neuralNet.fit(trainingSet, validationSet, setup)
+    console.log(answer.history.loss[0]);
+
+}
+
+function createNeuralNet() {
+
+    neuralNet.add(tf.layers.dense({
+        units: 30,
+        inputShape: [34]
+    }));
+    neuralNet.add(tf.layers.dense({
+        units: 25
+    }));
+
+    neuralNet.add(tf.layers.dense({
+        units: 20
+    }));
+    neuralNet.add(tf.layers.dense({
+        units: 13
+    }));
+
+    neuralNet.compile({
+        optimizer: adamOpt,
+        loss: tf.losses.softmaxCrossEntropy
+    });
+}
+
+function visualizeSelection(prediction) {
+    let arrayPrediction = []
+    for (let i = 0; i < prediction.strides; i++) {
+        let a = prediction.arraySync()[i];
+        arrayPrediction.push(a)
+    }
+
+    let correctGuesses = 0;
+    let finalArray = [];
+
+    for (let i = 0; i < arrayPrediction.length; i++) {
+        let finalRow = [];
+        let currentBestScore = 0;
+        let indexBestScore = 0
+        for (let j = 0; j < arrayPrediction[i].length; j++) {
+            if (arrayPrediction[i][j] > currentBestScore) {
+                currentBestScore = arrayPrediction[i][j];
+                indexBestScore = j;
+            }
+        }
+        for (let j = 0; j < arrayPrediction.length; j++) {
+            if (j == indexBestScore) {
+                finalRow.push(1)
+            } else finalRow.push(0)
+        }
+
+        if (finalRow[i] == 1) {
+            correctGuesses++;
+        }
+
+        finalArray.push(finalRow);
+    }
+
+    let finalTensor = tf.tensor(finalArray);
+    finalTensor.print();
+    console.log("Correct Guesses: " + correctGuesses)
+}
 
 
 async function initializingTrainingSets() {
@@ -70,37 +142,13 @@ async function initializingTrainingSets() {
     });
 
     testSetInput = tf.tensor2d(testSetTemp)
-}
 
 
-async function train() {
-    let setup = {
-        epochs: 5
-    }
-    let answer = await neuralNet.fit(trainingSet, validationSet, setup)
-    console.log(answer.history.loss[0]);
-
-}
-
-function createNeuralNet() {
-
-    neuralNet.add(tf.layers.dense({
-        units: 5,
-        inputShape: [34]
-    }));
-    neuralNet.add(tf.layers.dense({
-        units: 6
-    }));
-
-    neuralNet.add(tf.layers.dense({
-        units: 5
-    }));
-    neuralNet.add(tf.layers.dense({
-        units: 13
-    }));
-
-    neuralNet.compile({
-        optimizer: adamOpt,
-        loss: "meanSquaredError"
-    });
+    // console.log("validationSet")
+    // validationSet.print();
+    // console.log("trainingSet")
+    // trainingSet.print();
+    // console.log("testSetInput")
+    // testSetInput.print();
+    // console.log(allPoses)
 }
