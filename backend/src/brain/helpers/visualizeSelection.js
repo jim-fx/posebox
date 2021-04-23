@@ -1,6 +1,8 @@
 import tf from "@tensorflow/tfjs";
+
 export default function visualizeSelection(prediction) {
   let arrayPrediction = [];
+
   for (let i = 0; i < prediction.strides; i++) {
     let a = prediction.arraySync()[i];
     arrayPrediction.push(a);

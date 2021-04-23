@@ -4,12 +4,9 @@ import createIdentityMatrix from "./helpers/createIdentityMatrix.js";
 import visualizeSelection from "./helpers/visualizeSelection.js";
 
 let neuralNet;
-
 let trainingSet;
 let validationSet;
 let testSetInput;
-
-let testSetExpected = tf.tensor(createIdentityMatrix(13));
 
 async function train() {
   const setup = {
@@ -65,27 +62,30 @@ async function initializingTrainingSets() {
   let trainingData = await getAllTrainingPoses();
   let allPoses = await getAllPoses();
 
-  let training = [];
-  let validation = [];
+  let training = trainingData.map((pose) => pose.pose);
 
-  trainingData.forEach((pose) => {
-    training.push(pose.pose);
-    for (let i = 0; i < allPoses.length; i++) {
-      if (pose.id === allPoses[i].id) {
-        let temp = testSetExpected.arraySync()[i];
-        validation.push(temp);
-      }
-    }
-  });
+  // Create a matrix of the format
+  /**
+   * [1, 0, 0, 0, 0]
+   * [0, 1, 0, 0, 0]
+   * [0, 0, 1, 0, 0]
+   * [0, 0, 0, 1, 0]
+   * [0, 0, 0, 0, 1]
+   */
+  const testSetExpected = createIdentityMatrix(allPoses.length);
+
+  // Map the poses into a string array ["x", "o", "lmrh", ...]
+  const allPoseIdArray = allPoses.map((pose) => pose.id);
+
+  // Map each pose to a vector from the identity matrix
+  const validation = trainingData.map(
+    (pose) => testSetExpected[allPoseIdArray.indexOf(pose.id)]
+  );
 
   validationSet = tf.tensor2d(validation);
   trainingSet = tf.tensor2d(training);
 
-  let testSetTemp = [];
-
-  allPoses.forEach((pose) => {
-    testSetTemp.push(pose.pose);
-  });
+  let testSetTemp = allPoses.map((pose) => pose.pose);
 
   testSetInput = tf.tensor2d(testSetTemp);
 
