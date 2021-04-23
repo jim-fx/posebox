@@ -8,7 +8,7 @@ import {
 } from "../database/index.js"
 
 let neuralNet = tf.sequential();
-const adamOpt = tf.train.adam(0.01);
+const adamOpt = tf.train.sgd(0.002);
 
 var trainingSet;
 let validationSet;
@@ -39,9 +39,8 @@ let prediction
 setInterval(function () {
     train().then(
         prediction = neuralNet.predict(testSetInput),
-        //  prediction.print(),
-        // console.log(prediction),
-        visualizeSelection(prediction)
+        visualizeSelection(prediction),
+        prediction.print()
     );
 }, 1000);
 
@@ -73,7 +72,7 @@ function createNeuralNet() {
 
     neuralNet.compile({
         optimizer: adamOpt,
-        loss: "meanSquaredError"
+        loss: tf.losses.softmaxCrossEntropy
     });
 }
 
@@ -143,4 +142,13 @@ async function initializingTrainingSets() {
     });
 
     testSetInput = tf.tensor2d(testSetTemp)
+
+
+    // console.log("validationSet")
+    // validationSet.print();
+    // console.log("trainingSet")
+    // trainingSet.print();
+    // console.log("testSetInput")
+    // testSetInput.print();
+    // console.log(allPoses)
 }
