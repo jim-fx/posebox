@@ -1,5 +1,5 @@
 import tf from "@tensorflow/tfjs-node";
-import { readFile } from "fs/promises";
+import { mkdir, readFile } from "fs/promises";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import db from "../database/index.js";
@@ -160,6 +160,8 @@ async function initializingTrainingSets() {
 
 async function init() {
   if (neuralNet) return;
+
+  await mkdir(resolve(__dirname, "weights"));
 
   await initializingTrainingSets();
 
