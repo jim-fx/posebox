@@ -21,10 +21,7 @@ const createDB = async (fileName) => {
   };
 };
 
-const db = {
-  training: createDB("trainingData"),
-  poses: createDB("poses"),
-};
+let db;
 
 async function addTrainingPose(pose) {
   const poses = await db.training;
@@ -52,10 +49,17 @@ async function getAllPoses() {
 
 async function addPose(pose) {}
 
-export {
-  addTrainingPose,
-  getAllTrainingPoses,
-  getTrainingPosesByID,
-  getAllPoses,
-  addPose,
+export default () => {
+  db = {
+    training: createDB("trainingData"),
+    poses: createDB("poses"),
+  };
+
+  return {
+    addTrainingPose,
+    getAllTrainingPoses,
+    getTrainingPosesByID,
+    getAllPoses,
+    addPose,
+  };
 };

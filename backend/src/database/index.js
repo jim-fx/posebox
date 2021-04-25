@@ -1,7 +1,9 @@
 import * as config from "../config/index.js";
-import * as localAdapter from "./localAdapter/index.js";
-import * as mongoAdapter from "./mongoAdapter/index.js";
+import createLocalAdapter from "./localAdapter/index.js";
+import createMongoAdapter from "./mongoAdapter/index.js";
 
-const adapter = true || config.isProduction ? mongoAdapter : localAdapter;
+const adapter = config.isProduction
+  ? createMongoAdapter()
+  : createLocalAdapter();
 
 export default adapter;

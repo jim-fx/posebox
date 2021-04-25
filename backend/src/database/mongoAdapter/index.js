@@ -11,19 +11,7 @@ const client = new MongoClient(config.MONGO_URL, {
 /**
  * @type Promise<{ [key:string]: pkg.Collection }>
  */
-const db = new Promise((res, rej) => {
-  client.connect((err) => {
-    if (err) {
-      return rej(err);
-    }
-
-    res({
-      trainingRaw: client.db("training").collection("raw"),
-      trainingCleaned: client.db("training").collection("clean"),
-      poses: client.db("poses").collection("main"),
-    });
-  });
-});
+let db;
 
 async function addTrainingPose(pose) {
   const { poses } = await db;
@@ -55,18 +43,36 @@ async function addPoses(poses) {
   return (await db).poses.insertMany(poses);
 }
 
-(async () => {
+async function initData() {
   const poses = await getAllPoses();
 
   if (!poses.length) {
     await addPoses(await localAdapter.getAllPoses());
   }
-})();
+}
 
-export {
-  addTrainingPose,
-  getAllTrainingPoses,
-  getTrainingPosesByID,
-  getAllPoses,
-  addPose,
+export default () => {
+  db = new Promise((res, rej) => {
+    client.connect((err) => {
+      if (err) {
+        return rej(err);
+      }
+
+      res({
+        trainingRaw: client.db("training").collection("raw"),
+        trainingCleaned: client.db("training").collection("clean"),
+        poses: client.db("poses").collection("main"),
+      });
+    });
+  });
+
+  initData();
+
+  return {
+    addTrainingPose,
+    getAllTrainingPoses,
+    getTrainingPosesByID,
+    getAllPoses,
+    addPose,
+  };
 };
