@@ -2,10 +2,7 @@ import tf from "@tensorflow/tfjs-node";
 import { readFile } from "fs/promises";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
-import {
-  getAllPoses,
-  getAllTrainingPoses,
-} from "../database/localAdapter/index.js";
+import db from "../database/index.js";
 import socket from "../socket-server.js";
 import createIdentityMatrix from "./helpers/createIdentityMatrix.js";
 import shuffleArray from "./helpers/shuffleArray.js";
@@ -114,8 +111,8 @@ function createNeuralNet() {
 }
 
 async function initializingTrainingSets() {
-  const trainingData = shuffleArray(await getAllTrainingPoses());
-  const allPoses = await getAllPoses();
+  const trainingData = shuffleArray(await db.getAllTrainingPoses());
+  const allPoses = await db.getAllPoses();
 
   const amountPerID = {};
   const training = trainingData.map((pose) => {
