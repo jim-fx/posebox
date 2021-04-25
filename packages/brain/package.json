@@ -11,7 +11,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "esbuild": "^0.11.13",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
