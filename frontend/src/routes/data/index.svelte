@@ -2,7 +2,6 @@
   import { createPoseDetector, speak, throttle } from "helpers";
   import { onMount } from "svelte";
   import PoseDisplay from "../../components/PoseDisplay.svelte";
-  import { compressPose } from "@poser/skelly";
 
   let video;
   let detector;
@@ -32,7 +31,7 @@
           speak(poses[currentIndex].description);
         }
         currentTime--;
-      }   
+      }
     }, 1000);
   }
 
@@ -60,8 +59,10 @@
 
     poses = await response.json();
 
+    let stream;
+
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         video: true,
       });
 
@@ -78,6 +79,11 @@
     } catch (error) {
       console.error(error);
     }
+
+    return () => {
+      video.stop();
+      stream.stop();
+    };
   });
 </script>
 
