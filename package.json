@@ -1,7 +1,7 @@
 {
   "name": "poser",
   "scripts": {
-    "start": "pnpm -r --parallel start",
+    "start": "pnpm -r start",
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm i -r && pnpm -r --parallel build"
   },
