@@ -1,0 +1,10 @@
+stages:
+  - deploy
+
+heroku:
+  image: tmaier/dpl
+  stage: deploy
+  script:
+    - dpl --provider=heroku --app=poser --api-key=$HEROKU_API_KEY
+  only:
+    - main
