@@ -8,8 +8,6 @@ const io = new Promise((res) => {
 const connectTo = (server) => {
   const _io = new Server(server);
 
-  console.log("server");
-
   _io.on("connection", (socket) => {
     socket.on("pose", (pose) => {
       socket.broadcast.emit("pose", pose);

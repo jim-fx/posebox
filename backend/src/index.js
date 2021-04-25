@@ -2,7 +2,8 @@ import bodyParser from "body-parser";
 import express from "express";
 import http from "http";
 import brain from "./brain/index.js";
-import { addTrainingPose, getAllPoses } from "./database/index.js";
+import * as config from "./config/index.js";
+import db from "./database/index.js";
 import socket from "./socket-server.js";
 
 const app = express();
@@ -15,8 +16,7 @@ app.use(express.static("../frontend/public"));
 app.use(bodyParser.json());
 
 app.get("/poses", async (req, res) => {
-  const poses = await getAllPoses();
-  res.json(poses);
+  res.json(await db.getAllPoses());
 });
 
 app.use("/brain/model", express.static("./brain/weights"));
@@ -34,7 +34,7 @@ app.get("/brain/weights", async (req, res) => {
 });
 
 app.post("/trainingData", (req, res) => {
-  addTrainingPose(req.body)
+  db.addTrainingPose(req.body)
     .then(() => res.status(200).send("Poses saved"))
     .catch((err) => {
       console.log(err);
@@ -42,6 +42,6 @@ app.post("/trainingData", (req, res) => {
     });
 });
 
-server.listen(8080, () => {
-  console.log("server listening on port 8080");
+server.listen(config.PORT, () => {
+  console.log(`server listening on port ${config.PORT}`);
 });

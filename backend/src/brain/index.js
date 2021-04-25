@@ -2,7 +2,10 @@ import tf from "@tensorflow/tfjs-node";
 import { readFile } from "fs/promises";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
-import { getAllPoses, getAllTrainingPoses } from "../database/index.js";
+import {
+  getAllPoses,
+  getAllTrainingPoses,
+} from "../database/localAdapter/index.js";
 import socket from "../socket-server.js";
 import createIdentityMatrix from "./helpers/createIdentityMatrix.js";
 import shuffleArray from "./helpers/shuffleArray.js";
