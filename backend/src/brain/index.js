@@ -29,8 +29,10 @@ const options = {
   startTime: Date.now(),
 };
 
+const dataSetInformation = {};
+
 // Keep track of the learning process here;
-const iterations = [];
+let iterations = [];
 
 async function train() {
   const a = Date.now();
@@ -66,7 +68,7 @@ async function train() {
 
   iterations.push(currentIteration);
 
-  socket.send("brain.status", currentIteration);
+  socket.send("brain.iteration", currentIteration);
 
   if (loss) {
     train();
@@ -115,7 +117,14 @@ async function initializingTrainingSets() {
   const trainingData = shuffleArray(await getAllTrainingPoses());
   const allPoses = await getAllPoses();
 
-  const training = trainingData.map((pose) => pose.pose);
+  const amountPerID = {};
+  const training = trainingData.map((pose) => {
+    amountPerID[pose.id] =
+      pose.id in amountPerID ? amountPerID[pose.id] + 1 : 0;
+    return pose.pose;
+  });
+  dataSetInformation.amounts = amountPerID;
+  dataSetInformation.amount = trainingData.length;
 
   console.log("Loading " + trainingData.length + " poses");
 
@@ -167,7 +176,7 @@ function getIterations() {
 }
 
 async function getInfo() {
-  const info = { ...options };
+  const info = { ...options, dataset: dataSetInformation };
   info.currentTime = Date.now();
   try {
     const rawSummary = await readFile(
@@ -183,10 +192,18 @@ async function getInfo() {
   return info;
 }
 
+function reset() {
+  neuralNet.setWeights(neuralNet.initialWeights);
+  options.startTime = Date.now();
+  iterations = [];
+  socket.send("brain.reset");
+  return { ...options };
+}
+
 function getWeights() {
   return neuralNet.getWeights(true).map((w) => w.arraySync());
 }
 
 init();
 
-export default { getIterations, getInfo, getWeights };
+export default { getIterations, getInfo, getWeights, reset };

@@ -29,6 +29,10 @@ app.get("/brain/iterations", (req, res) => {
   res.json(brain.getIterations());
 });
 
+app.post("/brain/reset", (req, res) => {
+  res.json(brain.reset());
+});
+
 app.get("/brain/weights", async (req, res) => {
   res.json(await brain.getWeights());
 });
