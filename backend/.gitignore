@@ -1,1 +1,2 @@
-src/data/trainingData.json
+src/database/localAdapter/data/trainingData.json
+src/brain/weights/*
