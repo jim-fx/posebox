@@ -4,5 +4,8 @@
     "start": "build && pnpm -r --parallel start",
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r --parallel build"
+  },
+  "dependencies": {
+    "pnpm": "^6.2.1"
   }
 }
