@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/backend/src/brain/index.js",
+      "program": "${workspaceFolder}/backend/src/index.js",
       "outFiles": ["${workspaceFolder}/**/*.js"]
     }
   ]
