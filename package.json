@@ -6,7 +6,7 @@
     "build": "pnpm i -r && pnpm -r --parallel build"
   },
   "cacheDirectories": [
-    "/app/.pnpm-store/v3",
+    "/app/.pnpm-store",
     "node_modules/.pnpm"
   ],
   "dependencies": {

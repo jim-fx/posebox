@@ -29,12 +29,10 @@ async function addTrainingPose(pose) {
   const { poses } = await db;
 
   if (Array.isArray(pose)) {
-    await poses.insertMany(pose);
+    return await poses.insertMany(pose);
   } else {
-    await poses.insertOne(pose);
+    return await poses.insertOne(pose);
   }
-
-  return poses.save();
 }
 
 async function getAllTrainingPoses() {
