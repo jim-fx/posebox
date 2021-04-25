@@ -1,12 +1,13 @@
 {
   "name": "poser",
   "scripts": {
-    "start": "build && pnpm -r --parallel start",
+    "start": "pnpm -r --parallel start",
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm i -r && pnpm -r --parallel build"
   },
   "cacheDirectories": [
-    "/app/.pnpm-store/v3"
+    "/app/.pnpm-store/v3",
+    "node_modules/.pnpm"
   ],
   "dependencies": {
     "pnpm": "^6.2.1"
