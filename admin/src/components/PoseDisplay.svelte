@@ -1,6 +1,6 @@
 <script lang="ts">
   import { decompressPose } from "@poser/skelly";
-  import { mapNormalizedToAbsolut } from "helpers";
+  import { mapNormalizedToAbsolut, mapSkeleton } from "helpers";
   import P5 from "p5-svelte";
 
   export let pose;

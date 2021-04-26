@@ -1,4 +1,3 @@
-export { default as api } from "./api";
 export { default as createPoseDetector } from "./createPoseDetector";
 export { default as decimals } from "./decimals";
 export { default as humane } from "./humane";
