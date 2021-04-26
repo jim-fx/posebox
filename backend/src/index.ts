@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import * as config from "./config";
 import db from "./database";
+import * as middleware from "./middleware";
 import * as routes from "./routes";
 import socket from "./socket-server";
 
@@ -10,9 +11,9 @@ const server = createServer(app);
 
 socket.connectTo(server);
 
-app.use(express.static("../frontend/public"));
-
 app.use(express.json());
+
+app.use(express.static("../frontend/public"));
 
 app.get("/poses", async (req, res) => {
   res.json(await db.getAllPoses());
@@ -20,14 +21,10 @@ app.get("/poses", async (req, res) => {
 
 app.use("/brain", routes.brain);
 
-app.post("/trainingData", (req, res) => {
-  db.addTrainingPose(req.body)
-    .then(() => res.status(200).send("Poses saved"))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).send("Error saving poses");
-    });
-});
+app.use("/admin", middleware.adminAuth, express.static("../admin/public"));
+app.use("/admin", middleware.adminAuth, routes.admin);
+
+app.use("/data", routes.data);
 
 server.listen(config.PORT, () => {
   console.log(`server listening on port ${config.PORT}`);
