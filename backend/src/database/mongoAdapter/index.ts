@@ -30,7 +30,7 @@ async function addTrainingPose(pose: Pose | Pose[]) {
 }
 
 async function getAllTrainingPoses(): Promise<Pose[]> {
-  return (await db).training.find({ verified: true }).toArray();
+  return (await db).training.find().toArray();
 }
 
 async function getTrainingPosesByID(id): Promise<Pose> {
