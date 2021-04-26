@@ -1,9 +1,11 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@poser/cli': workspace:./packages/cli
   pnpm: ^6.2.1
 
 dependencies:
+  '@poser/cli': link:packages/cli
   pnpm: 6.2.1
 
 packages:

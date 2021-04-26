@@ -1,0 +1,11 @@
+{
+  "name": "@poser/cli",
+  "main": "cli.js",
+  "bin": {
+    "poser": "cli.js"
+  },
+  "dependencies": {
+    "mongodb": "^3.6.6",
+    "node-fetch": "^2.6.1"
+  }
+}
