@@ -1,6 +1,7 @@
 <script lang="ts">
+  import api from "@poser/api";
   import { LineChart, MatrixChart } from "components/graph";
-  import { api, humane } from "helpers";
+  import { humane } from "helpers";
 
   const history = api.getBrainHistory();
   const info = api.get("/brain/info");

@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@poser/api': workspace:../packages/api
   '@poser/skelly': workspace:../packages/skelly
   '@rollup/plugin-commonjs': ^17.0.0
   '@rollup/plugin-node-resolve': ^11.0.0
@@ -30,6 +31,7 @@ dependencies:
   socket.io-client: 4.0.1
 
 devDependencies:
+  '@poser/api': link:../packages/api
   '@rollup/plugin-commonjs': 17.1.0_rollup@2.45.2
   '@rollup/plugin-node-resolve': 11.2.1_rollup@2.45.2
   '@rollup/plugin-typescript': 8.2.1_d21869dc49fccc93d6599238c3a50ee6
