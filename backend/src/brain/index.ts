@@ -29,6 +29,8 @@ const dataSetInformation: {
 // Keep track of the learning process here;
 let iterations = [];
 
+let debug = false;
+
 async function train() {
   const a = Date.now();
 
@@ -36,13 +38,13 @@ async function train() {
 
   const prediction = neuralNet.predict(testSetInput) as Tensor<Rank>;
 
-  console.log("Current Iteration ", iterations.length);
+  debug && console.log("Current Iteration ", iterations.length);
 
-  visualizeSelection(prediction);
+  debug && visualizeSelection(prediction);
 
   const loss = answer.history.loss[0];
 
-  console.log("Loss: ", loss);
+  debug && console.log("Loss: ", loss);
 
   const b = Date.now();
 
@@ -51,8 +53,10 @@ async function train() {
     const res = await neuralNet.save(
       `file://${resolve(__dirname, "./weights")}`
     );
-    console.log("Save neural net");
-    console.log(res);
+    if (debug) {
+      console.log("Save neural net");
+      console.log(res);
+    }
   }
 
   const currentIteration = {

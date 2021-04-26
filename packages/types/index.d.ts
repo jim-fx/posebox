@@ -16,3 +16,9 @@ export interface Pose {
    */
   verified: boolean;
 }
+
+export interface DBPaginationOptions {
+  amount: number;
+  offset: number;
+  verified?: boolean;
+}

@@ -1,3 +1,4 @@
+import { DBPaginationOptions, Pose } from "@poser/types";
 import { readFile, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { v4 as uuidv4 } from "uuid";
@@ -19,7 +20,7 @@ const createDB = async (fileName) => {
   };
 };
 
-let db;
+let db: { [key: string]: ReturnType<typeof createDB> };
 
 async function addTrainingPose(pose) {
   const poses = await db.training;
@@ -27,7 +28,6 @@ async function addTrainingPose(pose) {
   let data = Array.isArray(pose) ? pose : [pose];
 
   data = data.map((pose) => {
-    pose.verified = false;
     pose._id = uuidv4();
     return pose;
   });
@@ -35,6 +35,18 @@ async function addTrainingPose(pose) {
   poses.data.push(...pose);
 
   return poses.save();
+}
+
+async function getTrainingPoses({
+  amount = 100,
+  offset = 0,
+  verified,
+}: DBPaginationOptions): Promise<Pose[]> {
+  const d = (await db.training).data.filter((v) => {
+    return v.verified === verified;
+  });
+
+  return d.slice(offset, offset + amount);
 }
 
 async function getAllTrainingPoses() {
@@ -51,16 +63,34 @@ async function getAllPoses() {
 
 async function addPose(pose) {}
 
+async function init() {
+  const training = await db.training;
+
+  training.data.forEach((d) => {
+    if (!("_id" in d)) {
+      d._id = uuidv4();
+    }
+    if (!("verified" in d)) {
+      d.verified = false;
+    }
+  });
+
+  await training.save();
+}
+
 export default () => {
   db = {
     training: createDB("trainingData"),
     poses: createDB("poses"),
   };
 
+  init();
+
   return {
     addTrainingPose,
     getAllTrainingPoses,
     getTrainingPosesByID,
+    getTrainingPoses,
     getAllPoses,
     addPose,
   };

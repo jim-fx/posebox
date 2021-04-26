@@ -29,3 +29,11 @@ app.use("/data", routes.data);
 server.listen(config.PORT, () => {
   console.log(`server listening on port ${config.PORT}`);
 });
+
+process.once("SIGUSR2", function () {
+  process.kill(process.pid, "SIGUSR2");
+});
+
+process.on("SIGINT", function () {
+  process.kill(process.pid, "SIGINT");
+});

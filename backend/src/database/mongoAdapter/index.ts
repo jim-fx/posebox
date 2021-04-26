@@ -1,39 +1,33 @@
-import type { Pose } from "@poser/types";
-import pkg from "mongodb";
+import type { DBPaginationOptions, Pose } from "@poser/types";
+import { Collection, MongoClient } from "mongodb";
 import * as config from "../../config";
 import localAdapter from "../localAdapter";
-const { MongoClient } = pkg;
 
 const client = new MongoClient(config.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-/**
- * @type Promise<{ [key:string]: pkg.Collection }>
- */
-let db;
+let db: Promise<{
+  [key: string]: Collection;
+  training: Collection<Pose>;
+}>;
 
 async function addTrainingPose(pose: Pose | Pose[]) {
   const { training } = await db;
 
   let data = Array.isArray(pose) ? pose : [pose];
 
-  data = data.map((pose) => {
-    pose.verified = false;
-    return pose;
-  });
-
   console.log("[DB] Adding " + data.length + " new Poses");
 
-  return await training.insertMany(pose);
+  return await training.insertMany(data);
 }
 
 async function getAllTrainingPoses(): Promise<Pose[]> {
   return (await db).training.find().toArray();
 }
 
-async function getTrainingPosesByID(id): Promise<Pose> {
+async function getTrainingPosesByID(id): Promise<Pose[]> {
   return (await db).training.find({ id }).toArray();
 }
 
@@ -47,6 +41,20 @@ async function addPose(pose: Pose) {
 
 async function addPoses(poses: Pose[]) {
   return (await db).poses.insertMany(poses);
+}
+
+async function getTrainingPoses({
+  amount = 100,
+  offset = 0,
+  verified,
+}: DBPaginationOptions): Promise<Pose[]> {
+  return (await db).training
+    .aggregate([
+      { $match: { verified } },
+      { $skip: offset },
+      { $limit: amount },
+    ])
+    .toArray();
 }
 
 async function initData() {
@@ -78,6 +86,7 @@ export default () => {
   return {
     addTrainingPose,
     getAllTrainingPoses,
+    getTrainingPoses,
     getTrainingPosesByID,
     getAllPoses,
     addPose,

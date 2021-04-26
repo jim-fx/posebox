@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@poser/api': workspace:../packages/api
   '@rollup/plugin-commonjs': ^17.0.0
   '@rollup/plugin-node-resolve': ^11.0.0
   '@rollup/plugin-typescript': ^8.0.0
@@ -15,6 +16,9 @@ specifiers:
   svelte-preprocess: ^4.0.0
   tslib: ^2.0.0
   typescript: ^4.0.0
+
+dependencies:
+  '@poser/api': link:../packages/api
 
 devDependencies:
   '@rollup/plugin-commonjs': 17.1.0_rollup@2.45.2

@@ -12,4 +12,11 @@ router.post("/", (req, res) => {
     });
 });
 
+router.get("/training", async (req, res) => {
+  let amount = Math.min(100, parseInt(req.query.amount as string)) || 100;
+  const offset = parseInt(req.query.offset as string) || 100;
+
+  res.json(await db.getTrainingPoses({ amount, offset, verified: false }));
+});
+
 export default router;

@@ -1,3 +1,4 @@
+import { DBPaginationOptions, Pose } from "@poser/types";
 import { readable } from "svelte/store";
 import { get } from "./fetch";
 import { off, on } from "./socket";
@@ -21,4 +22,14 @@ const getBrainHistory = () =>
     return () => off("brain.iteration", handleSocket);
   });
 
-export { getBrainHistory };
+const getTrainingPoses = async ({
+  amount,
+  offset,
+  verified,
+}: DBPaginationOptions): Promise<Pose[]> => {
+  return get(
+    `/data/training?amount=${amount}&offset=${offset}&verified=${verified}`
+  );
+};
+
+export { getBrainHistory, getTrainingPoses };
