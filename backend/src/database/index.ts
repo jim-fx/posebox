@@ -1,6 +1,6 @@
-import * as config from "../config/index.js";
-import createLocalAdapter from "./localAdapter/index.js";
-import createMongoAdapter from "./mongoAdapter/index.js";
+import * as config from "../config";
+import createLocalAdapter from "./localAdapter";
+import createMongoAdapter from "./mongoAdapter";
 
 const adapter = config.isProduction
   ? createMongoAdapter()

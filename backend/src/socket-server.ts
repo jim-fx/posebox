@@ -1,12 +1,13 @@
-import { Server } from "socket.io";
+import { Server as HttpServer } from "http";
+import { Server as SocketServer } from "socket.io";
 
-let _resolveIo;
-const io = new Promise((res) => {
+let _resolveIo: (v: SocketServer) => void;
+const io: Promise<SocketServer> = new Promise((res) => {
   _resolveIo = res;
 });
 
-const connectTo = (server) => {
-  const _io = new Server(server);
+const connectTo = (server: HttpServer) => {
+  const _io = new SocketServer(server);
 
   _io.on("connection", (socket) => {
     socket.on("pose", (pose) => {
@@ -17,7 +18,7 @@ const connectTo = (server) => {
   _resolveIo(_io);
 };
 
-async function send(eventType, msg) {
+async function send(eventType: string, msg?: any) {
   (await io).local.emit(eventType, msg);
 }
 

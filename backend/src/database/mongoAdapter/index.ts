@@ -1,6 +1,6 @@
 import pkg from "mongodb";
-import * as config from "../../config/index.js";
-import * as localAdapter from "../localAdapter/index.js";
+import * as config from "../../config";
+import localAdapter from "../localAdapter";
 const { MongoClient } = pkg;
 
 const client = new MongoClient(config.MONGO_URL, {
@@ -47,7 +47,7 @@ async function initData() {
   const poses = await getAllPoses();
 
   if (!poses.length) {
-    await addPoses(await localAdapter.getAllPoses());
+    await addPoses(await localAdapter().getAllPoses());
   }
 }
 
