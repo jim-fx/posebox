@@ -126,6 +126,8 @@
   </div>
 </div>
 
+<input type="file" accept="application/json" />
+
 <div
   id="progress-bar"
   style={`width: ${(currentTime / holdPoseDuration) * 100}%;`}

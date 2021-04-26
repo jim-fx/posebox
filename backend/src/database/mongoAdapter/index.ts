@@ -1,3 +1,4 @@
+import type { Pose } from "@poser/types";
 import pkg from "mongodb";
 import * as config from "../../config";
 import localAdapter from "../localAdapter";
@@ -13,7 +14,7 @@ const client = new MongoClient(config.MONGO_URL, {
  */
 let db;
 
-async function addTrainingPose(pose) {
+async function addTrainingPose(pose: Pose | Pose[]) {
   const { training } = await db;
 
   let data = Array.isArray(pose) ? pose : [pose];
@@ -28,23 +29,23 @@ async function addTrainingPose(pose) {
   return await training.insertMany(pose);
 }
 
-async function getAllTrainingPoses() {
+async function getAllTrainingPoses(): Promise<Pose[]> {
   return (await db).training.find({ verified: true }).toArray();
 }
 
-async function getTrainingPosesByID(id) {
+async function getTrainingPosesByID(id): Promise<Pose> {
   return (await db).training.find({ id }).toArray();
 }
 
-async function getAllPoses() {
+async function getAllPoses(): Promise<Pose[]> {
   return (await db).poses.find({}).toArray();
 }
 
-async function addPose(pose) {
+async function addPose(pose: Pose) {
   return (await db).poses.insertOne(pose);
 }
 
-async function addPoses(poses) {
+async function addPoses(poses: Pose[]) {
   return (await db).poses.insertMany(poses);
 }
 
