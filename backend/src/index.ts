@@ -1,8 +1,8 @@
 import express from "express";
 import { createServer } from "http";
-import brain from "./brain";
 import * as config from "./config";
 import db from "./database";
+import * as routes from "./routes";
 import socket from "./socket-server";
 
 const app = express();
@@ -18,23 +18,7 @@ app.get("/poses", async (req, res) => {
   res.json(await db.getAllPoses());
 });
 
-app.use("/brain/model", express.static("./brain/weights"));
-
-app.get("/brain/info", async (req, res) => {
-  res.json(await brain.getInfo());
-});
-
-app.get("/brain/iterations", (req, res) => {
-  res.json(brain.getIterations());
-});
-
-app.post("/brain/reset", (req, res) => {
-  res.json(brain.reset());
-});
-
-app.get("/brain/weights", async (req, res) => {
-  res.json(await brain.getWeights());
-});
+app.use("/brain", routes.brain);
 
 app.post("/trainingData", (req, res) => {
   db.addTrainingPose(req.body)
