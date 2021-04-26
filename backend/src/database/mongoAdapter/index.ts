@@ -16,19 +16,24 @@ let db;
 async function addTrainingPose(pose) {
   const { poses } = await db;
 
-  if (Array.isArray(pose)) {
-    return await poses.insertMany(pose);
-  } else {
-    return await poses.insertOne(pose);
-  }
+  let data = Array.isArray(pose) ? pose : [pose];
+
+  data = data.map((pose) => {
+    pose.verified = false;
+    return pose;
+  });
+
+  console.log("[DB] Adding " + data.length + " new Poses");
+
+  return await poses.insertMany(pose);
 }
 
 async function getAllTrainingPoses() {
-  return (await db).trainingCleaned.find({}).toArray();
+  return (await db).training.find({ verified: true }).toArray();
 }
 
 async function getTrainingPosesByID(id) {
-  return (await db).trainingCleaned.find({ id }).toArray();
+  return (await db).training.find({ id }).toArray();
 }
 
 async function getAllPoses() {
@@ -56,11 +61,12 @@ export default () => {
     client.connect((err) => {
       if (err) {
         return rej(err);
+      } else {
+        console.log("[DB-mongo] connected");
       }
 
       res({
-        trainingRaw: client.db("training").collection("raw"),
-        trainingCleaned: client.db("training").collection("clean"),
+        training: client.db("training").collection("poses"),
         poses: client.db("poses").collection("main"),
       });
     });

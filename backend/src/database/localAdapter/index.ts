@@ -1,5 +1,6 @@
 import { readFile, writeFile } from "fs/promises";
 import { resolve } from "path";
+import { v4 as uuidv4 } from "uuid";
 
 const createDB = async (fileName) => {
   const path = resolve(__dirname + `/data/${fileName}.json`);
@@ -23,11 +24,15 @@ let db;
 async function addTrainingPose(pose) {
   const poses = await db.training;
 
-  if (Array.isArray(pose)) {
-    poses.data.push(...pose);
-  } else {
-    poses.data.push(pose);
-  }
+  let data = Array.isArray(pose) ? pose : [pose];
+
+  data = data.map((pose) => {
+    pose.verified = false;
+    pose._id = uuidv4();
+    return pose;
+  });
+
+  poses.data.push(...pose);
 
   return poses.save();
 }
