@@ -1,2 +1,3 @@
 src/database/localAdapter/data/trainingData.json
 src/brain/weights/*
+dist

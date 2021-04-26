@@ -1,19 +1,14 @@
-import tf from "@tensorflow/tfjs-node";
+import * as tf from "@tensorflow/tfjs-node";
+import { Rank, Tensor } from "@tensorflow/tfjs-node";
 import { mkdir, readFile } from "fs/promises";
-import { dirname, resolve } from "path";
-import { fileURLToPath } from "url";
-import db from "../database/index.js";
-import socket from "../socket-server.js";
-import createIdentityMatrix from "./helpers/createIdentityMatrix.js";
-import shuffleArray from "./helpers/shuffleArray.js";
-import visualizeSelection from "./helpers/visualizeSelection.js";
+import { resolve } from "path";
+import db from "../database";
+import socket from "../socket-server";
+import createIdentityMatrix from "./helpers/createIdentityMatrix";
+import shuffleArray from "./helpers/shuffleArray";
+import visualizeSelection from "./helpers/visualizeSelection";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-/**
- * @type tf.Sequential
- */
-let neuralNet;
+let neuralNet: tf.Sequential;
 let trainingSet;
 let validationSet;
 let testSetInput;
@@ -26,7 +21,10 @@ const options = {
   startTime: Date.now(),
 };
 
-const dataSetInformation = {};
+const dataSetInformation: {
+  amount?: number;
+  amounts?: { [key: string]: number };
+} = {};
 
 // Keep track of the learning process here;
 let iterations = [];
@@ -36,7 +34,7 @@ async function train() {
 
   const answer = await neuralNet.fit(trainingSet, validationSet, options);
 
-  const prediction = neuralNet.predict(testSetInput);
+  const prediction = neuralNet.predict(testSetInput) as Tensor<Rank>;
 
   console.log("Current Iteration ", iterations.length);
 
@@ -161,7 +159,7 @@ async function initializingTrainingSets() {
 async function init() {
   if (neuralNet) return;
 
-  await mkdir(resolve(__dirname, "weights"));
+  await mkdir(resolve(__dirname, "weights"), { recursive: true });
 
   await initializingTrainingSets();
 
@@ -175,7 +173,7 @@ function getIterations() {
 }
 
 async function getInfo() {
-  const info = { ...options, dataset: dataSetInformation };
+  const info: any = { ...options, dataset: dataSetInformation };
   info.currentTime = Date.now();
   try {
     const rawSummary = await readFile(

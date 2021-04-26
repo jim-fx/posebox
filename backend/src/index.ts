@@ -1,19 +1,18 @@
-import bodyParser from "body-parser";
 import express from "express";
-import http from "http";
-import brain from "./brain/index.js";
-import * as config from "./config/index.js";
-import db from "./database/index.js";
-import socket from "./socket-server.js";
+import { createServer } from "http";
+import brain from "./brain";
+import * as config from "./config";
+import db from "./database";
+import socket from "./socket-server";
 
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 
 socket.connectTo(server);
 
 app.use(express.static("../frontend/public"));
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.get("/poses", async (req, res) => {
   res.json(await db.getAllPoses());

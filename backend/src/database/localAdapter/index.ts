@@ -1,8 +1,5 @@
 import { readFile, writeFile } from "fs/promises";
-import { dirname, resolve } from "path";
-import { fileURLToPath } from "url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { resolve } from "path";
 
 const createDB = async (fileName) => {
   const path = resolve(__dirname + `/data/${fileName}.json`);
