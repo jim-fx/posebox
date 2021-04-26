@@ -14,7 +14,7 @@ const client = new MongoClient(config.MONGO_URL, {
 let db;
 
 async function addTrainingPose(pose) {
-  const { poses } = await db;
+  const { training } = await db;
 
   let data = Array.isArray(pose) ? pose : [pose];
 
@@ -25,7 +25,7 @@ async function addTrainingPose(pose) {
 
   console.log("[DB] Adding " + data.length + " new Poses");
 
-  return await poses.insertMany(pose);
+  return await training.insertMany(pose);
 }
 
 async function getAllTrainingPoses() {
