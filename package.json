@@ -3,7 +3,8 @@
   "scripts": {
     "start": "pnpm -r start",
     "dev": "pnpm -r --parallel dev",
-    "build": "pnpm i -r && pnpm -r --parallel build"
+    "build": "pnpm i -r && pnpm -r build",
+    "clean": "pnpm -r clean"
   },
   "cacheDirectories": [
     "/app/.pnpm-store",
