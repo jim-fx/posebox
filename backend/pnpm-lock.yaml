@@ -1,10 +1,10 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@poser/brain': workspace:../packages/brain
-  '@poser/cli': workspace:../packages/cli
-  '@poser/skelly': workspace:../packages/skelly
-  '@poser/types': workspace:../packages/types
+  '@poser/brain': link:../packages/brain
+  '@poser/cli': link:../packages/cli
+  '@poser/skelly': link:../packages/skelly
+  '@poser/types': link:../packages/types
   '@tensorflow/tfjs-node': ^3.4.0
   '@types/express': ^4.17.11
   '@types/mongodb': ^3.6.12

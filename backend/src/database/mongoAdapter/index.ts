@@ -1,4 +1,9 @@
-import type { DBPaginationOptions, Pose } from "@poser/types";
+import type {
+  DBPaginationOptions,
+  DBUpdateOption,
+  DBUpdateOptions,
+  Pose,
+} from "@poser/types";
 import { Collection, MongoClient } from "mongodb";
 import * as config from "../../config";
 import localAdapter from "../localAdapter";
@@ -38,17 +43,55 @@ async function addPoses(poses: Pose[]) {
   return (await db).poses.insertMany(poses);
 }
 
+async function deletePose(poseId: string) {
+  return (await db).poses.deleteOne({ id: poseId });
+}
+
+async function updatePose(poseId: string, update: Partial<Pose>) {
+  return (await db).poses.updateOne({ id: poseId }, { $set: update });
+}
+
 async function getTrainingPoses({
   amount = 100,
   offset = 0,
   verified,
+  id,
 }: DBPaginationOptions): Promise<Pose[]> {
-  let query: { [key: string]: any }[] = [{ $skip: offset }, { $limit: amount }];
+  let filters: { [key: string]: any }[] = [
+    { $skip: offset },
+    { $limit: amount },
+  ];
+
+  const query: { [key: string]: any } = {};
 
   if (typeof verified !== "undefined") {
-    query = [{ $match: { verified } }, ...query];
+    query.verified = verified;
   }
-  return (await db).training.aggregate(query).toArray();
+
+  if (typeof id === "string" && id.length) {
+    query.id = id;
+  }
+
+  if (Object.keys(query).length) {
+    filters = [{ $match: query }, ...filters];
+  }
+
+  return (await db).training.aggregate(filters).toArray();
+}
+
+async function updateSingleTrainingPose(updateOptions: DBUpdateOption) {
+  return (await db).training.updateOne(
+    { _id: updateOptions.id },
+    { $set: updateOptions.updates }
+  );
+}
+
+async function updateTrainingPoses(updates: DBUpdateOptions) {
+  return updates.map((up) => updateSingleTrainingPose(up));
+}
+
+async function getPoseById(poseId: string) {
+  return (await db).poses.findOne({ id: poseId });
 }
 
 async function initData() {
@@ -87,7 +130,13 @@ export default () => {
     getAllTrainingPoses,
     getTrainingPoses,
     getTrainingPosesByID,
+    updateSingleTrainingPose,
+    updateTrainingPoses,
+
     getAllPoses,
+    getPoseById,
     addPose,
+    deletePose,
+    updatePose,
   };
 };

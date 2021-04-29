@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { PoseDisplay } from "@poser/components";
   import { createPoseDetector, throttle } from "helpers";
   import { onMount } from "svelte";
-  import PoseDisplay from "../../components/PoseDisplay.svelte";
 
   let video;
   let skeleton;
