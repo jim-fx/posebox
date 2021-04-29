@@ -47,6 +47,8 @@ async function getTrainingPoses({
 
   if (typeof verified !== "undefined") {
     query = [{ $match: { verified } }, ...query];
+  } else if (verified === "undefined") {
+    query = [{ $match: { verified: null } }, ...query];
   }
 
   return (await db).training.aggregate(query).toArray();
