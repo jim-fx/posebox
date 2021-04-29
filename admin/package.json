@@ -24,6 +24,8 @@
     "@tsconfig/svelte": "^1.0.0"
   },
   "dependencies": {
-    "@poser/api": "workspace:../packages/api"
+    "@poser/api": "link:../packages/api",
+    "@poser/skelly": "link:../packages/skelly",
+    "@poser/types": "link:../packages/types"
   }
 }

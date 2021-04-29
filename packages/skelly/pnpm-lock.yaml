@@ -1,0 +1,7 @@
+lockfileVersion: 5.3
+
+specifiers:
+  '@poser/types': link:../types
+
+dependencies:
+  '@poser/types': link:../types

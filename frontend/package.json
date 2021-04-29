@@ -8,7 +8,7 @@
     "validate": "svelte-check"
   },
   "devDependencies": {
-    "@poser/api": "workspace:../packages/api",
+    "@poser/api": "link:../packages/api",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
@@ -28,7 +28,7 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "@poser/skelly": "workspace:../packages/skelly",
+    "@poser/skelly": "link:../packages/skelly",
     "p5-svelte": "^2.2.2",
     "rollup-plugin-includepaths": "^0.2.4",
     "socket.io-client": "^4.0.1"

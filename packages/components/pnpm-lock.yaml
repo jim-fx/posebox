@@ -1,0 +1,7 @@
+lockfileVersion: 5.3
+
+specifiers:
+  '@poser/skelly': link:../skelly
+
+dependencies:
+  '@poser/skelly': link:../skelly

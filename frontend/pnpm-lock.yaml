@@ -1,8 +1,8 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@poser/api': workspace:../packages/api
-  '@poser/skelly': workspace:../packages/skelly
+  '@poser/api': link:../packages/api
+  '@poser/skelly': link:../packages/skelly
   '@rollup/plugin-commonjs': ^17.0.0
   '@rollup/plugin-node-resolve': ^11.0.0
   '@rollup/plugin-typescript': ^8.0.0
