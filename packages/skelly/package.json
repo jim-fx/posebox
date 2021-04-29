@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@poser/types": "link:../types"
+    "@poser/types": "workspace:../types"
   },
   "license": "ISC"
 }
