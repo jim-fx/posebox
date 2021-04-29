@@ -43,15 +43,13 @@ async function getTrainingPoses({
   offset = 0,
   verified,
 }: DBPaginationOptions): Promise<Pose[]> {
-  return (await db).training
-    .aggregate(
-      [
-        typeof verified !== "undefined" && { $match: { verified } },
-        { $skip: offset },
-        { $limit: amount },
-      ].filter((v) => !!v)
-    )
-    .toArray();
+  let query: { [key: string]: any }[] = [{ $skip: offset }, { $limit: amount }];
+
+  if (typeof verified !== "undefined") {
+    query = [{ $match: { verified } }, ...query];
+  }
+
+  return (await db).training.aggregate(query).toArray();
 }
 
 async function initData() {

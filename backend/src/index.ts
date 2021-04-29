@@ -30,10 +30,8 @@ server.listen(config.PORT, () => {
   console.log(`server listening on port ${config.PORT}`);
 });
 
-process.once("SIGUSR2", function () {
-  process.kill(process.pid, "SIGUSR2");
-});
-
 process.on("SIGINT", function () {
-  process.kill(process.pid, "SIGINT");
+  console.log("\nGracefully shutting down from SIGINT (Ctrl-C)");
+  // some other closing procedures go here
+  process.exit(1);
 });
