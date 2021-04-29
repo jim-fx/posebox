@@ -99,6 +99,9 @@
 </svg>
 
 <style>
+  svg {
+    pointer-events: none;
+  }
   circle {
     fill: red;
     stroke: yellow;
@@ -108,6 +111,7 @@
   line {
     stroke: yellow;
     stroke-width: 5px;
+    stroke-linecap: round;
   }
 
   #hands > circle {

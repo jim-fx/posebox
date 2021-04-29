@@ -1,7 +1,6 @@
 import express from "express";
 import { createServer } from "http";
 import * as config from "./config";
-import db from "./database";
 import * as middleware from "./middleware";
 import * as routes from "./routes";
 import socket from "./socket-server";
@@ -20,9 +19,7 @@ app.use(express.json());
 
 app.use(express.static("../frontend/public"));
 
-app.get("/poses", async (req, res) => {
-  res.json(await db.getAllPoses());
-});
+app.use("/poses", routes.poses);
 
 app.use("/brain", routes.brain);
 

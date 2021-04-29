@@ -26,10 +26,32 @@ const getTrainingPoses = async ({
   amount,
   offset,
   verified,
+  id,
 }: DBPaginationOptions): Promise<Pose[]> => {
-  return get(
-    `/data/training?amount=${amount}&offset=${offset}&verified=${verified}`
-  );
+  let url = "?";
+
+  if (amount) {
+    url += `amount=${amount}&`;
+  }
+
+  if (offset) {
+    url += `offset=${offset}&`;
+  }
+
+  if (typeof verified !== undefined) {
+    url += `verified=${verified}&`;
+  }
+
+  if (id) {
+    url += `id=${id}`;
+  }
+
+  return get(`/data/training?${url}`);
 };
 
-export { getBrainHistory, getTrainingPoses };
+const getPoses = (): Promise<Pose[]> => get("/poses");
+
+const getTrainingDataInfo = (poseId?: string) =>
+  get(`/data/status/${poseId ? poseId : ""}`);
+
+export { getBrainHistory, getTrainingPoses, getPoses, getTrainingDataInfo };

@@ -15,12 +15,40 @@ export interface Pose {
    * If the pose has been verified
    */
   verified: boolean;
+
+  /**
+   * Only for the main poses
+   */
+  description?: string;
 }
 
+export interface DBUpdateOption {
+  id: string;
+  updates: {
+    verified?: boolean;
+    pose?: number[];
+  };
+}
+
+export type DBUpdateOptions = DBUpdateOption[];
+
 export interface DBPaginationOptions {
+  /**
+   * Amount of returned poses, maximal 100
+   */
   amount: number;
+  /**
+   * Offset by certain amount, useful for pagination
+   */
   offset: number;
+  /**
+   * Filter for verified or unverified poses
+   */
   verified?: boolean | string;
+  /**
+   * Filter for specific poses
+   */
+  id?: string;
 }
 
 interface Vector2D {
