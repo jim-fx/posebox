@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@poser/api': link:../packages/api
+  '@poser/components': link:../packages/components
   '@poser/skelly': link:../packages/skelly
   '@poser/types': link:../packages/types
   '@rollup/plugin-commonjs': ^17.0.0
@@ -21,6 +22,7 @@ specifiers:
 
 dependencies:
   '@poser/api': link:../packages/api
+  '@poser/components': link:../packages/components
   '@poser/skelly': link:../packages/skelly
   '@poser/types': link:../packages/types
 

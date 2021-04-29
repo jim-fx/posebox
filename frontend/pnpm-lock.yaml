@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@poser/api': link:../packages/api
+  '@poser/components': link:../packages/components
   '@poser/skelly': link:../packages/skelly
   '@rollup/plugin-commonjs': ^17.0.0
   '@rollup/plugin-node-resolve': ^11.0.0
@@ -25,6 +26,7 @@ specifiers:
   typescript: ^4.0.0
 
 dependencies:
+  '@poser/components': link:../packages/components
   '@poser/skelly': link:../packages/skelly
   p5-svelte: 2.2.2
   rollup-plugin-includepaths: 0.2.4

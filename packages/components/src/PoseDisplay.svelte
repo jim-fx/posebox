@@ -15,10 +15,12 @@
 
 <svg width="640" height="480" viewBox="0 0 640 480">
   {#if _pose}
-    <circle cx={_pose.nose.x} cy={_pose.nose.y} r={eyeDist * 1.5} />
+    <circle id="head" cx={_pose.nose.x} cy={_pose.nose.y} r={eyeDist} />
 
-    <circle cx={_pose.rightWrist.x} cy={_pose.rightWrist.y} r="16" />
-    <circle cx={_pose.leftWrist.x} cy={_pose.leftWrist.y} r="16" />
+    <g id="hands">
+      <circle cx={_pose.rightWrist.x} cy={_pose.rightWrist.y} r="16" />
+      <circle cx={_pose.leftWrist.x} cy={_pose.leftWrist.y} r="16" />
+    </g>
 
     <line
       x1={_pose.leftWrist.x}
@@ -93,26 +95,22 @@
       x2={_pose.rightAnkle.x}
       y2={_pose.rightAnkle.y}
     />
-
-    <!-- 
-
-   p5.line(
-     _pose.rightKnee.x,
-     _pose.rightKnee.y,
-     _pose.rightAnkle.x,
-     _pose.rightAnkle.y
-   );
-
-     -->
   {/if}
 </svg>
 
 <style>
   circle {
     fill: red;
+    stroke: yellow;
+    stroke-width: 5px;
   }
 
   line {
-    stroke: white;
+    stroke: yellow;
+    stroke-width: 5px;
+  }
+
+  #hands > circle {
+    fill: blue;
   }
 </style>
