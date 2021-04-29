@@ -1,5 +1,6 @@
 <script lang="ts">
   import api from "@poser/api";
+  import { PoseDisplay } from "@poser/components";
 
   const pageSize = 20;
   let index = 0;
@@ -9,7 +10,7 @@
     api.getTrainingPoses({
       amount: pageSize,
       offset: index * pageSize,
-      verified: "undefined",
+      verified: null,
     });
 
   function handleSubmit() {
@@ -21,6 +22,7 @@
   <p>Loading</p>
 {:then poses}
   {#each poses as pose}
+    <PoseDisplay pose={pose.pose} />
     <p>{pose._id}</p>
     <input type="checkbox" />
   {/each}

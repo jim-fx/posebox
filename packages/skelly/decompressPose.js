@@ -1,5 +1,9 @@
 import parts from "./parts.js";
 
+/**
+ * @type () => import("@poser/types").RawPose;
+ * @returns import("@poser/types").RawPose;
+ */
 export default (pose) => {
   const output = {};
 

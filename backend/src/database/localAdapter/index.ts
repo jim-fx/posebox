@@ -45,11 +45,11 @@ async function getTrainingPoses({
   let poses = (await db.training).data;
 
   if (typeof verified !== "undefined") {
-    console.log(typeof verified, verified);
+    if (verified === null) {
+      verified = undefined;
+    }
     poses = poses.filter((v) => v.verified === verified);
   }
-
-  console.log(offset, amount);
 
   return poses.slice(offset, offset + amount);
 }

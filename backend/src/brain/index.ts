@@ -73,6 +73,7 @@ async function train() {
     train();
   } else {
     console.log("We seem to have a problem here");
+    console.log("The loss is at ", loss);
   }
 }
 
