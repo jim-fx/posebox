@@ -45,8 +45,9 @@
     isSubmitting = false;
   }
 
-  let y = 0;
+  const allPosePromise = api.get("/data/status");
 
+  let y = 0;
   let accepted = {};
   function setAccepted(id, type, i) {
     if (accepted[id] === type) {
@@ -62,63 +63,75 @@
   }
 </script>
 
-<div class="sub-nav">
-  {#await posePromise}
-    <h3>Loading</h3>
-  {:then poses}
-    {#each poses as pose}
-      <div
-        class:active={activePose === pose.id}
-        on:click={() => {
-          activePose = pose.id;
-        }}
-      >
-        {pose.id}
-      </div>
-    {/each}
-
-    {#if poses.find((p) => p.id === activePose)}
-      <p class="description">
-        {poses.find((p) => p.id === activePose).description}
-      </p>
-    {/if}
-  {/await}
-</div>
-
 <svelte:window bind:scrollY={y} />
 
-{#if isSubmitting}
-  <p>Submitting...</p>
-{:else if posesPromise}
-  {#await posesPromise}
-    <p>Loading</p>
-  {:then poses}
-    {#if !poses.length}
-      <p>All poses verified</p>
-    {/if}
+{#await allPosePromise then status}
+  {#if status.totalVerified < 1}
+    <div class="sub-nav">
+      {#await posePromise}
+        <h3>Loading</h3>
+      {:then poses}
+        {#each poses as pose}
+          <div
+            class:active={activePose === pose.id}
+            on:click={() => {
+              activePose = pose.id;
+            }}
+          >
+            {pose.id}
+          </div>
+        {/each}
 
-    {#each poses as pose, i}
-      <div
-        class="pose-wrapper"
-        bind:this={wrappers[i]}
-        class:rejected={accepted[pose._id] === false}
-        class:accepted={accepted[pose._id] === true}
-      >
-        <div class="accept" on:click={() => setAccepted(pose._id, true, i)} />
-        <div class="reject" on:click={() => setAccepted(pose._id, false, i)} />
-        <PoseDisplay pose={pose.pose} />
+        {#if poses.find((p) => p.id === activePose)}
+          <p class="description">
+            {poses.find((p) => p.id === activePose).description}
+          </p>
+        {/if}
+      {/await}
+    </div>
+
+    {#if isSubmitting}
+      <p>Submitting...</p>
+    {:else if posesPromise}
+      {#await posesPromise}
+        <p>Loading</p>
+      {:then poses}
+        {#if !poses.length}
+          <p>All poses verified</p>
+        {/if}
+
+        {#each poses as pose, i}
+          <div
+            class="pose-wrapper"
+            bind:this={wrappers[i]}
+            class:rejected={accepted[pose._id] === false}
+            class:accepted={accepted[pose._id] === true}
+          >
+            <div
+              class="accept"
+              on:click={() => setAccepted(pose._id, true, i)}
+            />
+            <div
+              class="reject"
+              on:click={() => setAccepted(pose._id, false, i)}
+            />
+            <PoseDisplay pose={pose.pose} />
+          </div>
+        {/each}
+
+        <button on:click={handleSubmit}>submit</button>
+      {/await}
+
+      <div class="info">
+        {#await activePosePromise then info}
+          <pre>{JSON.stringify(info, null, 2)}</pre>
+        {/await}
       </div>
-    {/each}
-
-    <button on:click={handleSubmit}>submit</button>
-  {/await}
-
-  <div class="info">
-    {#await activePosePromise then info}
-      <pre>{JSON.stringify(info, null, 2)}</pre>
-    {/await}
-  </div>
-{/if}
+    {/if}
+  {:else}
+    <p>All poses are verified!</p>
+  {/if}
+{/await}
 
 <style>
   .description {
@@ -130,9 +143,10 @@
   }
 
   .info {
-    position: absolute;
+    position: fixed;
     left: 0px;
     bottom: 0px;
+    pointer-events: none;
   }
 
   .sub-nav > div {

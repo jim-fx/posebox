@@ -42,11 +42,7 @@ const getTrainingPoses = async ({
     url += `verified=${verified}&`;
   }
 
-  if (id) {
-    url += `id=${id}`;
-  }
-
-  return get(`/data/training?${url}`);
+  return get(`/data/training${id ? `/${id}` : ""}?${url}`);
 };
 
 const getPoses = (): Promise<Pose[]> => get("/poses");

@@ -12,14 +12,16 @@ router.post("/", (req, res) => {
     });
 });
 
-router.get("/training", async (req, res) => {
+router.get("/training/:poseId?", async (req, res) => {
   // "?amount=100&kevin=schlomeple"
 
   // "0, 10, "
 
   //short-circuting
 
-  let { amount = 100, verified, offset = 0, id } = req.query as {
+  const { poseId } = req.params;
+
+  let { amount = 100, verified, offset = 0 } = req.query as {
     [key: string]: any;
   };
 
@@ -36,7 +38,7 @@ router.get("/training", async (req, res) => {
     }
   }
 
-  res.json(await db.getTrainingPoses({ amount, offset, verified, id }));
+  res.json(await db.getTrainingPoses({ amount, offset, verified, id: poseId }));
 });
 
 router.post("/verify", async (req, res) => {
@@ -76,54 +78,58 @@ router.get("/status/:poseId?", async (req, res) => {
   if (poseId) {
     const total = await db.getTrainingPosesByID(poseId);
 
-    const verified = await db.getTrainingPoses({
-      amount: 10000,
-      offset: 0,
-      id: poseId,
-      verified: true,
-    });
+    const verified = total.filter(
+      (pose) => typeof pose.verified !== "undefined"
+    );
+
+    const accepted = total.filter((pose) => pose.verified);
 
     res.json({
       totalAmount: total.length,
       verifiedAmount: verified.length,
-      verifiedPercent: verified.length / total.length,
+      accepted: accepted.length / total.length,
+      verified: verified.length / total.length,
     });
   } else {
     const total = await db.getAllTrainingPoses();
 
-    const verified = await db.getTrainingPoses({
-      amount: 10000,
-      offset: 0,
-      verified: true,
-    });
+    const verified = total.filter(
+      (pose) => typeof pose.verified !== "undefined"
+    );
 
-    const verifiedAmount = verified.length / total.length;
+    const accepted = total.filter((pose) => pose.verified);
 
-    const amountVerified = {};
     const amount = {};
+    const posesVerified = {};
+    const posesAccepted = {};
     total.forEach((v) => {
       amount[v.id] = v.id in amount ? amount[v.id] + 1 : 1;
-      if (amountVerified[v.id] && v.verified) {
-        amountVerified[v.id] += 1;
-      } else if (v.verified) {
-        amountVerified[v.id] = 1;
+
+      if (typeof v.verified !== "undefined") {
+        posesVerified[v.id] =
+          v.id in posesVerified ? posesVerified[v.id] + 1 : 1;
+      }
+
+      if (v.verified) {
+        posesAccepted[v.id] =
+          v.id in posesAccepted ? posesAccepted[v.id] + 1 : 0;
       }
     });
 
-    const percentVerified = {};
     Object.keys(amount).forEach((key) => {
-      if (key in amountVerified) {
-        percentVerified[key] = amountVerified[key] / amount[key];
-      } else {
-        percentVerified[key] = 0;
-      }
+      posesVerified[key] =
+        key in posesVerified ? posesVerified[key] / amount[key] : 0;
+      posesAccepted[key] =
+        key in posesAccepted ? posesAccepted[key] / amount[key] : 0;
     });
 
     res.json({
       totalAmount: total.length,
-      verifiedAmount,
+      totalAccepted: accepted.length / total.length,
+      totalVerified: verified.length / total.length,
       amount,
-      percentVerified,
+      accepted: posesAccepted,
+      verified: posesVerified,
     });
   }
 });
