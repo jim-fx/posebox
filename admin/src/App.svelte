@@ -1,11 +1,6 @@
 <script lang="ts">
   import * as routes from "./routes";
-
-  let currentRoute = "index";
-
-  $: if (!(currentRoute in routes)) {
-    currentRoute = "index";
-  }
+  import { activeRoute } from "./stores";
 </script>
 
 <main>
@@ -13,14 +8,14 @@
     {#each Object.keys(routes) as key}
       <button
         on:click={() => {
-          currentRoute = key;
+          $activeRoute = key;
         }}>{key}</button
       >
     {/each}
   </nav>
 
-  {#if currentRoute in routes}
-    <svelte:component this={routes[currentRoute]} />
+  {#if $activeRoute in routes}
+    <svelte:component this={routes[$activeRoute]} />
   {/if}
 </main>
 

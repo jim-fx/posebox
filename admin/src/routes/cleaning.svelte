@@ -4,15 +4,13 @@
   const pageSize = 20;
   let index = 0;
 
-  let posesPromise;
-
-  $: if (index > -1) {
-    posesPromise = api.getTrainingPoses({
+  $: posesPromise =
+    index > -1 &&
+    api.getTrainingPoses({
       amount: pageSize,
       offset: index * pageSize,
-      verified: false,
+      verified: "undefined",
     });
-  }
 
   function handleSubmit() {
     index++;
