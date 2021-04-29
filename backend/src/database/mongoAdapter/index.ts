@@ -3,11 +3,6 @@ import { Collection, MongoClient } from "mongodb";
 import * as config from "../../config";
 import localAdapter from "../localAdapter";
 
-const client = new MongoClient(config.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
 let db: Promise<{
   [key: string]: Collection;
   training: Collection<Pose>;
@@ -49,11 +44,13 @@ async function getTrainingPoses({
   verified,
 }: DBPaginationOptions): Promise<Pose[]> {
   return (await db).training
-    .aggregate([
-      { $match: { verified } },
-      { $skip: offset },
-      { $limit: amount },
-    ])
+    .aggregate(
+      [
+        typeof verified !== "undefined" && { $match: { verified } },
+        { $skip: offset },
+        { $limit: amount },
+      ].filter((v) => !!v)
+    )
     .toArray();
 }
 
@@ -66,6 +63,11 @@ async function initData() {
 }
 
 export default () => {
+  const client = new MongoClient(config.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+
   db = new Promise((res, rej) => {
     client.connect((err) => {
       if (err) {
