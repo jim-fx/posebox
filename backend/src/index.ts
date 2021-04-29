@@ -11,6 +11,10 @@ const server = createServer(app);
 
 socket.connectTo(server);
 
+app.enable("trust proxy");
+
+app.use(middleware.https);
+
 app.use(express.json());
 
 app.use(express.static("../frontend/public"));
