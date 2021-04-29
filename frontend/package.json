@@ -25,9 +25,9 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "@poser/skelly": "link:../packages/skelly",
-    "@poser/api": "link:../packages/api",
-    "@poser/components": "link:../packages/components",
+    "@poser/skelly": "workspace:../packages/skelly",
+    "@poser/api": "workspace:../packages/api",
+    "@poser/components": "workspace:../packages/components",
     "rollup-plugin-includepaths": "^0.2.4",
     "socket.io-client": "^4.0.1",
     "ml5": "^0.6.1"

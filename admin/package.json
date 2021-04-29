@@ -23,9 +23,9 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
-    "@poser/api": "link:../packages/api",
-    "@poser/components": "link:../packages/components",
-    "@poser/skelly": "link:../packages/skelly",
-    "@poser/types": "link:../packages/types"
+    "@poser/api": "workspace:../packages/api",
+    "@poser/components": "workspace:../packages/components",
+    "@poser/skelly": "workspace:../packages/skelly",
+    "@poser/types": "workspace:../packages/types"
   }
 }

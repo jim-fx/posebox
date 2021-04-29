@@ -4,9 +4,8 @@
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "styles": "dist/index.css",
   "scripts": {
-    "build": "rollup -c &&  tsc --declaration --emitDeclarationOnly",
+    "build": "rollup -c && tsc --declaration --emitDeclarationOnly",
     "dev": "rollup -c -w",
     "validate": "svelte-check"
   },
@@ -14,8 +13,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@poser/skelly": "link:../skelly",
-    "@poser/types": "link:../types",
+    "@poser/skelly": "workspace:../skelly",
+    "@poser/types": "workspace:../types",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "rollup": "^2.3.4",
