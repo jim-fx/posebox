@@ -42,11 +42,16 @@ async function getTrainingPoses({
   offset = 0,
   verified,
 }: DBPaginationOptions): Promise<Pose[]> {
-  const d = (await db.training).data.filter((v) => {
-    return v.verified === verified;
-  });
+  let poses = (await db.training).data;
 
-  return d.slice(offset, offset + amount);
+  if (typeof verified !== "undefined") {
+    console.log(typeof verified, verified);
+    poses = poses.filter((v) => v.verified === verified);
+  }
+
+  console.log(offset, amount);
+
+  return poses.slice(offset, offset + amount);
 }
 
 async function getAllTrainingPoses() {
@@ -70,9 +75,6 @@ async function init() {
     if (!("_id" in d)) {
       d._id = uuidv4();
     }
-    if (!("verified" in d)) {
-      d.verified = false;
-    }
   });
 
   await training.save();
@@ -85,6 +87,8 @@ export default () => {
   };
 
   init();
+
+  console.log("[DB-local] initialized");
 
   return {
     addTrainingPose,

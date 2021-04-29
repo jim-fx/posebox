@@ -116,6 +116,10 @@ async function initializingTrainingSets() {
   const trainingData = shuffleArray(await db.getAllTrainingPoses());
   const allPoses = await db.getAllPoses();
 
+  if (!trainingData.length) {
+    console.error("No training data available");
+  }
+
   const amountPerID = {};
   const training = trainingData.map((pose) => {
     amountPerID[pose.id] =

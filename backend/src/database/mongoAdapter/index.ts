@@ -19,7 +19,7 @@ async function addTrainingPose(pose: Pose | Pose[]) {
 }
 
 async function getAllTrainingPoses(): Promise<Pose[]> {
-  return (await db).training.find().toArray();
+  return (await db).training.find({}).toArray();
 }
 
 async function getTrainingPosesByID(id): Promise<Pose[]> {
@@ -47,10 +47,7 @@ async function getTrainingPoses({
 
   if (typeof verified !== "undefined") {
     query = [{ $match: { verified } }, ...query];
-  } else if (verified === "undefined") {
-    query = [{ $match: { verified: null } }, ...query];
   }
-
   return (await db).training.aggregate(query).toArray();
 }
 
