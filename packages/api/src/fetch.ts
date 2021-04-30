@@ -1,4 +1,6 @@
 const get = async (url) => {
+  console.log("[API-get] " + url);
+
   const res = await fetch(url);
 
   return res.json();

@@ -4,7 +4,7 @@ import type {
   DBUpdateOptions,
   Pose,
 } from "@poser/types";
-import { Collection, MongoClient } from "mongodb";
+import { Collection, MongoClient, ObjectID } from "mongodb";
 import * as config from "../../config";
 import localAdapter from "../localAdapter";
 
@@ -48,7 +48,7 @@ async function deletePose(poseId: string) {
 }
 
 async function updatePose(poseId: string, update: Partial<Pose>) {
-  return (await db).poses.updateOne({ id: poseId }, { $set: update });
+  return (await db).poses.updateOne({ _id: poseId }, { $set: update });
 }
 
 async function getTrainingPoses({
@@ -80,10 +80,16 @@ async function getTrainingPoses({
 }
 
 async function updateSingleTrainingPose(updateOptions: DBUpdateOption) {
-  return (await db).training.updateOne(
-    { _id: updateOptions.id },
+  const result = await (await db).training.updateOne(
+    //@ts-ignore
+    { _id: new ObjectID(updateOptions.id) },
     { $set: updateOptions.updates }
   );
+
+  console.log("[DB-mongo] updates", updateOptions.id, updateOptions.updates);
+  console.log(result.result.nModified);
+
+  return result;
 }
 
 async function updateTrainingPoses(updates: DBUpdateOptions) {

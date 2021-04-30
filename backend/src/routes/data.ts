@@ -44,8 +44,6 @@ router.get("/training/:poseId?", async (req, res) => {
 router.post("/verify", async (req, res) => {
   const body = req.body;
 
-  console.log(body);
-
   const updates = body
     .map((v) => {
       if (

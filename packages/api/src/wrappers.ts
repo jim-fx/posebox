@@ -28,7 +28,7 @@ const getTrainingPoses = async ({
   verified,
   id,
 }: DBPaginationOptions): Promise<Pose[]> => {
-  let url = "?";
+  let url = "";
 
   if (amount) {
     url += `amount=${amount}&`;

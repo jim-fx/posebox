@@ -2,7 +2,7 @@
   import api from "@poser/api";
   import { PoseDisplay } from "@poser/components";
 
-  const pageSize = 20;
+  const pageSize = 5;
   let index = 0;
   let isSubmitting = false;
 
