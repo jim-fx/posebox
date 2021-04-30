@@ -22,7 +22,7 @@ const options = {
 // Keep track of the learning process here;
 let iterations = [];
 
-let debug = true;
+let debug = false;
 
 async function train() {
   const a = Date.now();
