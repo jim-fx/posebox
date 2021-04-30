@@ -1,8 +1,8 @@
 <script lang="ts">
   import api from "@poser/api";
-  import { LineChart, MatrixChart } from "components/graph";
+  import { LineChart, MatrixChart, VisualizeNetwork } from "@poser/components";
   import { humane } from "helpers";
-  import { VisualizeNetwork } from "@poser/components";
+
   // import type * as tf from "@tensorflow/tfjs";
 
   const history = api.getBrainHistory();
