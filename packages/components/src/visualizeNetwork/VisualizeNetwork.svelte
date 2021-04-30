@@ -27,7 +27,7 @@
     return _neurons;
   }
 
-  function getWeights(nn: Sequential) {
+  function getWeights(nn: Sequential): number[][][] {
     const weights = [];
     const biases = [];
 
@@ -47,17 +47,43 @@
   $: layers = neuralNet && getNeurons(neuralNet);
   $: weights = neuralNet && getWeights(neuralNet);
 
-  let scale = 0;
+  let scale = 1;
   let px = 0;
   let py = 0;
+
+  function handleMouseOver() {
+    scale = 4;
+  }
+
+  function handleMouseOut() {
+    scale = 1;
+    px = 0;
+    py = 0;
+  }
+
+  let wrapper: HTMLElement;
+
+  $: rect = wrapper && wrapper.getBoundingClientRect();
+  function handleMouseMove({ x, y }: MouseEvent) {
+    px = (1 - (x - rect.left) / rect.width - 0.5) * rect.width;
+    py = (1 - (y - rect.top) / rect.height - 0.5) * rect.height;
+  }
 </script>
 
-<div class="wrapper">
+<div
+  class="wrapper"
+  bind:this={wrapper}
+  on:mouseover={handleMouseOver}
+  on:mouseout={handleMouseOut}
+  on:mouseleave={handleMouseOut}
+  on:mouseenter={handleMouseOver}
+  on:mousemove={handleMouseMove}
+>
   <svg
     width="640"
     height="480"
     viewBox="0 0 100 100"
-    style={`transform: scale(${scale}), translate(${px},${py})`}
+    style={`transform: scale(${scale}) translate(${px}px,${py}px)`}
   >
     {#each weights as layer, i}
       {#each layer as neuron, j}
@@ -86,13 +112,24 @@
 </div>
 
 <style>
+  .wrapper {
+    overflow: hidden;
+    width: fit-content;
+    margin: 0 auto;
+  }
+
+  svg {
+    transition: transform 0.3s ease;
+    overflow: visible;
+  }
+
   circle {
     fill: red;
   }
 
   line {
     stroke: white;
-    opacity: 0.5;
+    opacity: 0.2;
     stroke-width: 0.1px;
   }
 </style>
