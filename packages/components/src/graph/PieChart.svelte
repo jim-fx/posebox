@@ -36,6 +36,17 @@
   {/each}
 </div>
 
+<svg height="20" width="20" viewBox="0 0 20 20">
+  <circle
+    r="5"
+    cx="10"
+    cy="10"
+    fill="transparent"
+    stroke-dasharray="calc(35 * 31.4 / 100) 31.4"
+    transform="rotate(-90) translate(-20)"
+  />
+</svg>
+
 <style>
   .wrapper {
     display: grid;
@@ -48,7 +59,5 @@
     background-color: white;
     color: black;
     text-align: right;
-    padding-right: 10px;
-    box-sizing: border-box;
   }
 </style>
