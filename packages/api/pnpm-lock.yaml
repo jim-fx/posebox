@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@poser/types': link:../types
+  '@poser/types': workspace:../types
   esbuild: ^0.11.13
   rimraf: ^3.0.2
   socket.io-client: ^4.0.1

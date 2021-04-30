@@ -190,7 +190,6 @@ async function getInfo() {
       "utf-8"
     );
     info.summary = JSON.parse(rawSummary);
-    console.log(info.summary);
   } catch (error) {
     console.log(error);
   }

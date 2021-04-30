@@ -1,7 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@poser/types': link:../types
+  '@poser/types': workspace:../types
 
 dependencies:
   '@poser/types': link:../types

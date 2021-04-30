@@ -2,6 +2,8 @@
   import api from "@poser/api";
   import { LineChart, MatrixChart } from "components/graph";
   import { humane } from "helpers";
+  import { VisualizeNetwork } from "@poser/components";
+  // import type * as tf from "@tensorflow/tfjs";
 
   const history = api.getBrainHistory();
   const info = api.get("/brain/info");
@@ -27,6 +29,9 @@
       });
     });
   }
+
+  // https://www.tensorflow.org/js/guide/save_load
+  const modelPromise = tf.loadLayersModel("/brain/model/model.json");
 </script>
 
 <section>
@@ -55,6 +60,14 @@
         <td>{humane.time(duration)}</td>
       </tr>
     </table>
+  {/await}
+</section>
+
+<section>
+  {#await modelPromise}
+    <p>Loading model</p>
+  {:then model}
+    <VisualizeNetwork neuralNet={model} />
   {/await}
 </section>
 
