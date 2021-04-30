@@ -18,10 +18,13 @@ const createDB = async (fileName) => {
 
   return {
     data,
-    save: () =>
-      writeFile(path, JSON.stringify(data), {
+    save: () => {
+      const content = JSON.stringify(data);
+      if (!content.length) return;
+      return writeFile(path, content, {
         encoding: "utf-8",
-      }),
+      });
+    },
   };
 };
 

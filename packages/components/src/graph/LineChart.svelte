@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { decimals } from "helpers";
+  import decimals from "./decimals";
 
   export let data: number[] = [];
 
