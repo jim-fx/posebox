@@ -49,6 +49,23 @@
 </script>
 
 <svg width="640" height="480" viewBox="0 0 100 100">
+
+    {#each weights as layer, i}
+    {#each layer as neuron, j}
+        {#each neuron as singleWeight, k}
+            {#if layers[i+1][k]}
+                <line
+                    stroke-width={singleWeight*10}
+                    x1={layers[i][j].x}
+                    y1={layers[i][j].y}
+                    x2={layers[i + 1][k].x}
+                    y2={layers[i + 1][k].y}
+                />
+            {/if}
+        {/each}
+    {/each}
+{/each}
+
     {#each layers as layer}
         <g>
             {#each layer as n}
@@ -57,18 +74,7 @@
         </g>
     {/each}
 
-    {#each weights as layer, i}
-        {#each layer as neuron, j}
-            {#if layers[i+1][j]}
-                <line
-                    x1={layers[i][j].x}
-                    y1={layers[i][j].y}
-                    x2={layers[i + 1][j].x}
-                    y2={layers[i + 1][j].y}
-                />
-            {/if}
-        {/each}
-    {/each}
+
 </svg>
 
 <style>
@@ -78,6 +84,7 @@
 
     line {
         stroke: white;
+        opacity: 0.5;
         stroke-width: 0.1px;
     }
 </style>
