@@ -80,16 +80,11 @@ async function getTrainingPoses({
 }
 
 async function updateSingleTrainingPose(updateOptions: DBUpdateOption) {
-  const result = await (await db).training.updateOne(
+  return (await db).training.updateOne(
     //@ts-ignore
     { _id: new ObjectID(updateOptions.id) },
     { $set: updateOptions.updates }
   );
-
-  console.log("[DB-mongo] updates", updateOptions.id, updateOptions.updates);
-  console.log(result.result.nModified);
-
-  return result;
 }
 
 async function updateTrainingPoses(updates: DBUpdateOptions) {

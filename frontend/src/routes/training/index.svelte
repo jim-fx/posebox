@@ -3,8 +3,6 @@
   import { LineChart, MatrixChart, VisualizeNetwork } from "@poser/components";
   import { humane } from "helpers";
 
-  // import type * as tf from "@tensorflow/tfjs";
-
   const history = api.getBrainHistory();
   const info = api.get("/brain/info");
 
