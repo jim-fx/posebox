@@ -1,9 +1,10 @@
 {
   "name": "poser",
   "scripts": {
+    "heroku-prebuild": "npm i -g heroku && pnpm i -r --store=node_modules/.pnpm-store",
     "start": "pnpm -r start",
     "dev": "pnpm -r --parallel dev",
-    "build": "pnpm i -r && pnpm -r build",
+    "build": "pnpm -r build",
     "clean": "pnpm -r clean"
   },
   "cacheDirectories": [
