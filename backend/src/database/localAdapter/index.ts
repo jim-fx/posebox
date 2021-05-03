@@ -20,7 +20,7 @@ const createDB = async (fileName) => {
     data,
     save: () => {
       const content = JSON.stringify(data);
-      if (!content.length) return;
+      if (content.length < 5) return;
       return writeFile(path, content, {
         encoding: "utf-8",
       });

@@ -58,11 +58,10 @@ async function train() {
     duration: b - a,
   };
 
-  iterations.push(currentIteration);
-
   socket.send("brain.iteration", currentIteration);
 
   if (loss) {
+    iterations.push(currentIteration);
     train();
   } else {
     console.log("We seem to have a problem here");

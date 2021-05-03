@@ -1,6 +1,7 @@
 <script lang="ts">
   import api from "@poser/api";
   import { LineChart, MatrixChart, VisualizeNetwork } from "@poser/components";
+  import type * as tf from "@tensorflow/tfjs";
   import { humane } from "helpers";
 
   const history = api.getBrainHistory();
@@ -28,8 +29,12 @@
     });
   }
 
+  const _tf: typeof tf =
+    //@ts-ignore
+    "tf" in window ? window.tf : "ml5" in window && window.ml5.tf;
+
   // https://www.tensorflow.org/js/guide/save_load
-  const modelPromise = tf.loadLayersModel("/brain/model/model.json");
+  const modelPromise = _tf.loadLayersModel("/brain/model/model.json");
 </script>
 
 <section>
