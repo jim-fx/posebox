@@ -23,6 +23,7 @@
   "dependencies": {
     "@poser/brain": "workspace:../packages/brain",
     "@poser/skelly": "workspace:../packages/skelly",
+    "@tensorflow/tfjs-core": "^3.6.0",
     "@tensorflow/tfjs-node": "^3.4.0",
     "express": "^4.17.1",
     "express-basic-auth": "^1.2.0",
