@@ -22,5 +22,6 @@
   .cell {
     height: 20px;
     width: 20px;
+    transition: background-color 200ms linear;
   }
 </style>

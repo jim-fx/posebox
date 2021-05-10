@@ -10,7 +10,7 @@
   <p>Loading...</p>
 {:then [status, poses]}
   {#if status.totalVerified < 1}
-    <PoseList {poses} />
+    <PoseList {poses} {status} />
   {:else}
     <p>All poses are verified!</p>
   {/if}

@@ -50,6 +50,11 @@
       "bottom-left bottom-right";
   }
 
+  :global(.pose-display > svg) {
+    width: 100%;
+    height: 100%;
+  }
+
   .accept,
   .reject {
     opacity: 0.05;

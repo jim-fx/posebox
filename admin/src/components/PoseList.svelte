@@ -4,6 +4,7 @@
   import PoseVote from "../components/PoseVote.svelte";
   import Visibility from "../components/Visibility.svelte";
 
+  export let status;
   export let poses: Pose[];
 
   let poseGroups: { id: string; description?: string; poses: Pose[] }[] = [];
@@ -81,7 +82,11 @@
   <Visibility let:percent>
     <div class="pose-preview">
       <!-- <p>{poseGroup.id}</p> -->
-      <p>{poseGroup.description}</p>
+      <p>
+        {poseGroup.description} ({Math.floor(
+          status.verified[poseGroup.id] * 100
+        )}%) verified
+      </p>
     </div>
     <div class="pose-group-wrapper">
       {#if poseGroup.poses.length === 0}
