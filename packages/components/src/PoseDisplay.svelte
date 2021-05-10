@@ -101,6 +101,8 @@
 <style>
   svg {
     pointer-events: none;
+    /* width: 100%; */
+    /* height: 100%; */
   }
   circle {
     fill: red;
