@@ -36,11 +36,11 @@ export interface DBPaginationOptions {
   /**
    * Amount of returned poses, maximal 100
    */
-  amount: number;
+  amount?: number;
   /**
    * Offset by certain amount, useful for pagination
    */
-  offset: number;
+  offset?: number;
   /**
    * Filter for verified or unverified poses
    */

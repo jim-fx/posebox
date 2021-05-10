@@ -27,7 +27,7 @@ const getTrainingPoses = async ({
   offset,
   verified,
   id,
-}: DBPaginationOptions): Promise<Pose[]> => {
+}: DBPaginationOptions = {}): Promise<Pose[]> => {
   let url = "";
 
   if (amount) {
@@ -38,8 +38,8 @@ const getTrainingPoses = async ({
     url += `offset=${offset}&`;
   }
 
-  if (typeof verified !== undefined) {
-    url += `verified=${verified}&`;
+  if (typeof verified !== "undefined") {
+    url += `verified=${verified}`;
   }
 
   return get(`/data/training${id ? `/${id}` : ""}?${url}`);
