@@ -3,16 +3,19 @@
   import { PoseDisplay } from "@poser/components";
   import type { Pose } from "@poser/types";
   import type * as tf from "@tensorflow/tfjs";
-  import { createPoseDetector, createVoiceDetector, getTf } from "helpers";
+  import {
+    createPoseDetector,
+    createVoiceDetector,
+    getTf,
+    throttle,
+  } from "helpers";
   import { onMount } from "svelte";
 
   const _tf = getTf();
 
   let video;
   let detector;
-  let voice = createVoiceDetector((res, isFinal) => {
-    console.log(res, isFinal);
-  });
+  let voice;
   let pose;
   let currentText;
   let allPoses: Pose[];
@@ -23,15 +26,56 @@
   let confidence = 0;
   let oldPrediction;
 
-  function stopRecording() {}
+  let recording = [];
+  let videoState = "stopped";
+  let videoStartTime = 0;
 
-  function startRecording() {}
-
-  function handlePose(pose) {
-    console.log(pose);
+  function stopRecording() {
+    if (videoState === "recording") {
+      videoState = "stopped";
+      console.log(recording);
+    }
   }
 
-  function handleVoice() {}
+  function startRecording() {
+    if (videoState === "stopped") {
+      videoState = "recording";
+      videoStartTime = Date.now();
+      alert("start");
+    }
+  }
+
+  function handlePose(pose) {
+    if (pose === "ok" && videoState === "stopped") {
+      startRecording();
+    }
+
+    if (pose === "x" && videoState === "recording") {
+      stopRecording();
+    }
+  }
+
+  function handleVoice(sentence) {
+    if (videoState === "recording") {
+      recording.push({
+        type: "voice",
+        content: sentence,
+        time: Date.now() - videoStartTime,
+      });
+      recording = recording;
+    }
+  }
+
+  const handleRunningPose = throttle((pose) => {
+    if (videoState === "recording") {
+      recording.push({
+        type: "pose",
+        content: pose,
+        time: Date.now() - videoStartTime,
+      });
+      recording = recording;
+    }
+  }, 500);
 
   function predict() {
     const result =
@@ -53,8 +97,8 @@
       oldPrediction = prediction;
       prediction = res[0];
       if (oldPrediction && oldPrediction.id === prediction.id) {
-        if (confidence < 30) {
-          confidence++;
+        confidence++;
+        if (confidence > 30) {
           handlePose(prediction.id);
         }
       } else {
@@ -66,6 +110,12 @@
   onMount(async () => {
     let stream;
 
+    voice = createVoiceDetector((res, isFinal) => {
+      if (isFinal) {
+        handleVoice(res);
+      }
+    });
+
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -76,6 +126,7 @@
       detector = createPoseDetector(video, (p) => {
         pose = p;
         predict();
+        handleRunningPose(p);
       });
 
       video.play();
@@ -98,17 +149,26 @@
 </script>
 
 <div class="inner-wrapper">
+  <pre>
+    <code>
+      {JSON.stringify(recording, null, 2)}
+    </code>
+  </pre>
   <video bind:this={video} width="600" height="480">
     <track kind="captions" />
   </video>
   <PoseDisplay {pose} />
-
   {#if prediction}
     <p>{prediction.id} {confidence}</p>
+    <p>{prediction.amount}</p>
   {/if}
 </div>
 
 <style>
+  pre {
+    position: absolute;
+  }
+
   :global(nav) {
     opacity: 0.05;
   }
@@ -126,12 +186,14 @@
   }
 
   p {
-    position: absolute;
+    /* position: absolute; */
     color: white;
     top: 0px;
   }
 
   :global(svg) {
+    position: absolute;
+    left: 0px;
     height: 100vh;
     width: 100vw;
   }
