@@ -33,7 +33,10 @@
   function stopRecording() {
     if (videoState === "recording") {
       videoState = "stopped";
-      console.log(recording);
+
+      if (confirm("Do you want to send the message?")) {
+        console.log(recording);
+      }
     }
   }
 
@@ -50,7 +53,7 @@
       startRecording();
     }
 
-    if (pose === "x" && videoState === "recording") {
+    if (pose === "luru" && videoState === "recording") {
       stopRecording();
     }
   }
@@ -74,8 +77,12 @@
         time: Date.now() - videoStartTime,
       });
       recording = recording;
+
+      if (Date.now() - videoStartTime > 30000) {
+        stopRecording();
+      }
     }
-  }, 500);
+  }, 50);
 
   function predict() {
     const result =
@@ -151,7 +158,9 @@
 <div class="inner-wrapper">
   <pre>
     <code>
-      {JSON.stringify(recording, null, 2)}
+      {#each recording.slice(Math.max(recording.length - 5, 1)) as step}
+        <p>({step.type}) {step.time}ms </p>
+      {/each}
     </code>
   </pre>
   <video bind:this={video} width="600" height="480">

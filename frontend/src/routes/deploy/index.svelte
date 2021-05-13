@@ -28,12 +28,15 @@
   $: chartData =
     prediction &&
     allPoses &&
-    prediction.arraySync()[0].map((v, i) => {
-      return {
-        id: allPoses[i].id,
-        amount: v,
-      };
-    });
+    prediction
+      .arraySync()[0]
+      .map((v, i) => {
+        return {
+          id: allPoses[i].id,
+          amount: v,
+        };
+      })
+      .sort((a, b) => b.amount - a.amount);
 
   let pose;
   let remotePoses = {};
@@ -87,7 +90,7 @@
 
 <section class="chart">
   {#if chartData}
-    <!-- {console.log(prediction.arraySync())} -->
+    {chartData[0].amount}
     <BarChart data={chartData} />
   {/if}
 </section>
