@@ -1,5 +1,7 @@
 export { default as createPoseDetector } from "./createPoseDetector";
+export { default as createVoiceDetector } from "./createVoiceDetector";
 export { default as decimals } from "./decimals";
+export { default as getTf } from "./getTf";
 export { default as humane } from "./humane";
 export { default as mapNormalizedToAbsolut } from "./mapNormalizedToAbsolut";
 export { default as mapSkeleton } from "./mapSkeleton";

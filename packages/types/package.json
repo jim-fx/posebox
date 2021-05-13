@@ -1,4 +1,5 @@
 {
   "name": "@poser/types",
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "version": "1.0.0"
 }

@@ -22,7 +22,7 @@ const options = {
 // Keep track of the learning process here;
 let iterations = [];
 
-let debug = false;
+let debug = true;
 
 async function train() {
   const a = Date.now();
@@ -114,7 +114,7 @@ async function init() {
   validationSet = data.validationSet;
   testSetInput = data.testSetInput;
 
-  train();
+  //train();
 }
 
 function getIterations() {

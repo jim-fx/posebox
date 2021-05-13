@@ -11,6 +11,6 @@
     "node_modules/.pnpm"
   ],
   "dependencies": {
-    "pnpm": "^6.2.1"
+    "pnpm": "^6.3.0"
   }
 }
