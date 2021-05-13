@@ -114,7 +114,7 @@ async function init() {
   validationSet = data.validationSet;
   testSetInput = data.testSetInput;
 
-  //train();
+  train();
 }
 
 function getIterations() {
