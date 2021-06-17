@@ -4,7 +4,7 @@ import createIdentityMatrix from "./helpers/createIdentityMatrix";
 import shuffleArray from "./helpers/shuffleArray";
 
 export default async () => {
-  const trainingData = shuffleArray(await db.getAllTrainingPoses());
+  const trainingData = shuffleArray(await db.getVerifiedTrainingPoses());
   const allPoses = await db.getAllPoses();
 
   if (!trainingData.length) {

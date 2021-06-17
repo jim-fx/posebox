@@ -2,11 +2,11 @@
   import api from "@poser/api";
   import PoseList from "../components/PoseList.svelte";
 
-  const allPosePromise = api.get("/data/status");
+  const statusPromise = api.get("/data/status");
   const posePromise = api.getPoses();
 </script>
 
-{#await Promise.all([allPosePromise, posePromise])}
+{#await Promise.all([statusPromise, posePromise])}
   <p>Loading...</p>
 {:then [status, poses]}
   {#if status.totalVerified < 1}

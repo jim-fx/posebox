@@ -79,6 +79,10 @@ async function getTrainingPoses({
   return (await db).training.aggregate(filters).toArray();
 }
 
+async function getVerifiedTrainingPoses(): Promise<Pose[]> {
+  return (await db).training.find({ $match: { verified: true } }).toArray();
+}
+
 async function updateSingleTrainingPose(updateOptions: DBUpdateOption) {
   return (await db).training.updateOne(
     //@ts-ignore
@@ -130,6 +134,7 @@ export default () => {
     addTrainingPose,
     getAllTrainingPoses,
     getTrainingPoses,
+    getVerifiedTrainingPoses,
     getTrainingPosesByID,
     updateSingleTrainingPose,
     updateTrainingPoses,

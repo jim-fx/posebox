@@ -35,6 +35,9 @@
       };
     });
 
+  $: probablePose =
+    chartData && [...chartData].sort((a, b) => b.amount - a.amount)[0];
+
   let pose;
   let remotePoses = {};
 
@@ -86,8 +89,10 @@
 </section>
 
 <section class="chart">
+  {#if probablePose}
+    Probably: {probablePose.id}
+  {/if}
   {#if chartData}
-    <!-- {console.log(prediction.arraySync())} -->
     <BarChart data={chartData} />
   {/if}
 </section>

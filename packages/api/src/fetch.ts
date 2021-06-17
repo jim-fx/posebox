@@ -18,4 +18,16 @@ const post = async (url, body) => {
   return res;
 };
 
-export { get, post };
+const put = async (url, body) => {
+  const res = await fetch(url, {
+    method: "PUT",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  return res;
+};
+
+export { get, post, put };
