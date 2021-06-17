@@ -41,7 +41,7 @@ router.get("/training/:poseId?", async (req, res) => {
   res.json(await db.getTrainingPoses({ amount, offset, verified, id: poseId }));
 });
 
-router.post("/verify", async (req, res) => {
+router.put("/verify", async (req, res) => {
   const body = req.body;
 
   const updates = body

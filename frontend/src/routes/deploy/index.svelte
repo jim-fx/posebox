@@ -1,8 +1,8 @@
 <script lang="ts">
   import api from "@poser/api";
-  import { BarChart, PoseDisplay } from "@poser/components";
+  import { BarChart,PoseDisplay } from "@poser/components";
   import type * as tf from "@tensorflow/tfjs";
-  import { createPoseDetector, throttle } from "helpers";
+  import { createPoseDetector,throttle } from "helpers";
   import { onMount } from "svelte";
 
   const _tf: typeof tf =
@@ -37,6 +37,9 @@
         };
       })
       .sort((a, b) => b.amount - a.amount);
+
+  $: probablePose =
+    chartData && [...chartData].sort((a, b) => b.amount - a.amount)[0];
 
   let pose;
   let remotePoses = {};
@@ -89,8 +92,10 @@
 </section>
 
 <section class="chart">
+  {#if probablePose}
+    Probably: {probablePose.id}
+  {/if}
   {#if chartData}
-    {chartData[0].amount}
     <BarChart data={chartData} />
   {/if}
 </section>
