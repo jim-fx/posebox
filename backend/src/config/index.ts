@@ -1,3 +1,7 @@
+import DOTENV from "dotenv"
+
+DOTENV.config()
+
 const {
   PORT = 8080,
   NODE_ENV = "development",

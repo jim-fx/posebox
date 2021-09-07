@@ -73,14 +73,14 @@ async function getTrainingPoses({
   }
 
   if (Object.keys(query).length) {
-    filters = [{ $match: query }, ...filters];
+    filters = [query, ...filters];
   }
 
   return (await db).training.aggregate(filters).toArray();
 }
 
 async function getVerifiedTrainingPoses(): Promise<Pose[]> {
-  return (await db).training.find({ $match: { verified: true } }).toArray();
+  return (await db).training.find({ verified: true }).toArray();
 }
 
 async function updateSingleTrainingPose(updateOptions: DBUpdateOption) {

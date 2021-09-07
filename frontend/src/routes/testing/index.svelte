@@ -66,10 +66,6 @@
 </div>
 
 <style>
-  :global(body) {
-    overflow: hidden;
-  }
-
   .wrapper > video,
   .wrapper > #bodyTracer {
     visibility: hidden;
