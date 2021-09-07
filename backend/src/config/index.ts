@@ -2,7 +2,7 @@ const {
   PORT = 8080,
   NODE_ENV = "development",
   ADMIN_PASS = "kevin",
-  MONGO_URL = "mongodb://127.0.0.1:27017",
+  MONGO_URL,
 } = process.env;
 
 const isProduction = NODE_ENV !== "development";
