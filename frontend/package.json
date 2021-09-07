@@ -27,10 +27,10 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@poser/api": "workspace:*",
-    "@poser/components": "workspace:*",
-    "@poser/types": "workspace:*",
-    "@poser/skelly": "workspace:*",
+    "@poser/api": "link:../packages/api",
+    "@poser/components": "link:../packages/components",
+    "@poser/types": "link:../packages/types",
+    "@poser/skelly": "link:../packages/skelly",
     "@tensorflow/tfjs": "^3.6.0",
     "@tensorflow/tfjs-backend-wasm": "^3.6.0",
     "ml5": "^0.6.1",

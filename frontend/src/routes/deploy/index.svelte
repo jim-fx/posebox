@@ -1,9 +1,10 @@
 <script lang="ts">
   import api from "@poser/api";
-  import { BarChart,PoseDisplay } from "@poser/components";
+  import { BarChart, PoseDisplay } from "@poser/components";
   import type * as tf from "@tensorflow/tfjs";
-  import { createPoseDetector,throttle } from "helpers";
+  import { createPoseDetector, throttle } from "helpers";
   import { onMount } from "svelte";
+  import { normalizePose } from "@poser/skelly";
 
   const _tf: typeof tf =
     //@ts-ignore
@@ -18,7 +19,9 @@
   let model: tf.Sequential;
 
   $: prediction =
-    model && pose && (model.predict(_tf.tensor2d(pose, [1, 34])) as tf.Tensor);
+    model &&
+    pose &&
+    (model.predict(_tf.tensor2d(normalizePose(pose), [1, 34])) as tf.Tensor);
 
   let allPoses;
   api.getPoses().then((poses) => {

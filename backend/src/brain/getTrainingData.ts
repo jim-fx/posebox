@@ -1,24 +1,25 @@
 import * as tf from "@tensorflow/tfjs-node";
 import db from "../database";
 import createIdentityMatrix from "./helpers/createIdentityMatrix";
+import { normalizePose } from "@poser/skelly";
 import shuffleArray from "./helpers/shuffleArray";
 
 export default async () => {
-  const trainingData = shuffleArray(await db.getVerifiedTrainingPoses());
+  const verifiedPoses = shuffleArray(await db.getVerifiedTrainingPoses());
   const allPoses = await db.getAllPoses();
 
-  if (!trainingData.length) {
+  if (!verifiedPoses.length) {
     console.error("No training data available");
   }
 
   const amountPerID = {};
-  const training = trainingData.map((pose) => {
+  const training = verifiedPoses.map((pose) => {
     amountPerID[pose.id] =
       pose.id in amountPerID ? amountPerID[pose.id] + 1 : 0;
-    return pose.pose;
+    return normalizePose(pose.pose);
   });
 
-  console.log("Loading " + trainingData.length + " poses");
+  console.log("Loading " + verifiedPoses.length + " poses");
 
   // Create a matrix of the format
   /**
@@ -34,14 +35,14 @@ export default async () => {
   const allPoseIdArray = allPoses.map((pose) => pose.id);
 
   // Map each pose to a vector from the identity matrix
-  const validation = trainingData.map(
+  const validation = verifiedPoses.map(
     (pose) => testSetExpected[allPoseIdArray.indexOf(pose.id)]
   );
 
   const validationSet = tf.tensor2d(validation);
   const trainingSet = tf.tensor2d(training);
 
-  let testSetTemp = allPoses.map((pose) => pose.pose);
+  let testSetTemp = allPoses.map((pose) => normalizePose(pose.pose));
   const testSetInput = tf.tensor2d(testSetTemp);
 
   // console.log("validationSet")

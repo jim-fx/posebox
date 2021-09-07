@@ -1,4 +1,4 @@
-import parts from "./parts.js";
+import parts from "./parts";
 
 export default (pose) => {
   const output = {};

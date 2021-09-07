@@ -1,4 +1,4 @@
-import parts from "./parts.js";
+import parts from "./parts";
 
 /**
  * @type () => import("@poser/types").RawPose;

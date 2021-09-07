@@ -1,5 +1,5 @@
-import * as tf from "@tensorflow/tfjs-node";
-import { Rank, Tensor } from "@tensorflow/tfjs-node";
+import * as tf from "@tensorflow/tfjs-node-gpu";
+import { Rank, Tensor } from "@tensorflow/tfjs-node-gpu";
 import { mkdir, readFile } from "fs/promises";
 import { resolve } from "path";
 import socket from "../socket-server";
@@ -11,11 +11,13 @@ let trainingSet;
 let validationSet;
 let testSetInput;
 
+const learningRate = 0.005
+
 const options = {
   batchSize: 20,
   epochs: 10,
   verbose: 0,
-  learningRate: 0.05,
+  learningRate,
   startTime: Date.now(),
 };
 
@@ -71,7 +73,7 @@ async function train() {
 
 function createNeuralNet() {
   const neuralNet = tf.sequential();
-  const adamOpt = tf.train.sgd(0.05);
+  const adamOpt = tf.train.adam(0.005);
 
   neuralNet.add(
     tf.layers.dense({
