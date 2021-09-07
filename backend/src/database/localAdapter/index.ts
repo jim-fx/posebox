@@ -71,6 +71,10 @@ async function getAllTrainingPoses() {
   return (await db.training).data;
 }
 
+async function getVerifiedTrainingPoses() {
+  return (await db.training).data.filter((pose) => pose.verified);
+}
+
 async function getTrainingPosesByID(id) {
   return (await db.training).data.filter((pose) => pose.id === id);
 }
@@ -149,6 +153,7 @@ export default () => {
     getAllTrainingPoses,
     getTrainingPoses,
     getTrainingPosesByID,
+    getVerifiedTrainingPoses,
     updateSingleTrainingPose,
     updateTrainingPoses,
 

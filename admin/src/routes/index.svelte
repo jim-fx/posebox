@@ -17,6 +17,6 @@
 {#await dataStatus}
   <p>Loading</p>
 {:then data}
-  <h3>Verteiling Trainingsdaten</h3>
+  <h3>Verteilung Trainingsdaten</h3>
   <BarChart {data} minValue={0} />
 {/await}

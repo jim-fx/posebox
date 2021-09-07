@@ -42,20 +42,26 @@ async function getResponse(request) {
     return self.fetch(request);
   }
 
-  //console.log("[SW] get " + request.url);
+  console.log("[SW] get " + request.url);
 
   const cache = await caches.open(CURRENT_CACHES[cacheType]);
 
   const cacheMatch = await cache.match(request);
 
   if (cacheMatch) {
-    //console.log("[SW] get from cache: " + request.url);
+    console.log("[SW] get from cache: " + request.url);
     return cacheMatch;
   }
 
   const response = await self.fetch(request);
 
-  return cache.put(request, response);
+  console.log(response);
+
+  if (response.ok) {
+    return cache.put(request, response);
+  }
+
+  return response;
 }
 
 self.addEventListener("fetch", (e) => e.respondWith(getResponse(e.request)));

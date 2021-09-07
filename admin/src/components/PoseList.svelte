@@ -62,7 +62,7 @@
       };
     });
 
-    await api.post("/data/verify", body);
+    await api.put("/data/verify", body);
 
     setTimeout(() => {
       isSubmitting = false;
@@ -70,11 +70,15 @@
   }
 
   let verifiedStore = {};
+  let timeout;
   function handleVerify(poseId, isVerified) {
     verifiedStore[poseId] = isVerified;
     if (Object.keys(verifiedStore).length > 10) {
       submitVerified();
     }
+
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(submitVerified, 10000);
   }
 </script>
 
