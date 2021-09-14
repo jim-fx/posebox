@@ -87,7 +87,8 @@
 
   .wrapper {
     position: absolute;
-    display: grid;
+    pointer-events: none;
+		display: grid;
     justify-content: center;
     align-items: center;
     width: 100vw;
