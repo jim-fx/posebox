@@ -1,220 +1,279 @@
 <script lang="ts">
-  import api from "@poser/api";
-  import { PoseDisplay } from "@poser/components";
-  import type { Pose } from "@poser/types";
-  import type * as tf from "@tensorflow/tfjs";
-  import { normalizePose } from "@poser/skelly";
-  import {
-    createPoseDetector,
-    createVoiceDetector,
-    getTf,
-    throttle,
-  } from "helpers";
-  import { onMount } from "svelte";
+	import api from "@poser/api";
+	import { PoseDisplay } from "@poser/components";
+	import type { Pose } from "@poser/types";
+	import type * as tf from "@tensorflow/tfjs";
+	import { normalizePose } from "@poser/skelly";
+	import {
+		createPoseDetector,
+		createVoiceDetector,
+		getTf,
+		throttle,
+	} from "helpers";
+	import { onMount } from "svelte";
 
-  const _tf = getTf();
+	const _tf = getTf();
 
-  let video;
-  let detector;
-  let voice;
-  let pose;
-  let currentText;
-  let allPoses: Pose[];
+	let video;
+	let detector;
+	let voice;
+	let pose;
+	let currentText;
+	let allPoses: Pose[];
+	//@ts-ignore
+	const socket = io();
 
-  let model;
+	let model;
 
-  let prediction;
-  let confidence = 0;
-  let oldPrediction;
+	let prediction;
+	let confidence = 0;
+	let oldPrediction;
 
-  let recording = [];
-  let videoState = "stopped";
-  let videoStartTime = 0;
+	let recording = [];
+	let videoState = "stopped";
+	let videoStartTime = 0;
 
-  function sendMessage() {
-    if (videoState === "recording") {
-      videoState = "stopped";
+	let message = "";
+	let timeout = 2000;
+	$: if (message) {
+		let m = message;
+		setTimeout(() => {
+			if (m !== message) return;
+			message = undefined;
+		}, timeout);
+	}
 
-      if (confirm("Do you want to send the message?")) {
-        console.log(recording);
-      }
-    }
-  }
+	function sendMessage() {
+		if (videoState === "recording") {
+			videoState = "stopped";
 
-  function startRecording() {
-    if (videoState === "stopped") {
-      videoState = "recording";
-      videoStartTime = Date.now();
-      alert("start");
-    }
-  }
+			message = "Message Send";
+			socket.send("message", message);
+		}
+	}
 
-  function handlePose(pose) {
-    if (pose === "lmrm" && videoState === "stopped") {
-      startRecording();
-    }
+	function startRecording() {
+		if (videoState === "stopped") {
+			videoState = "recording";
+			videoStartTime = Date.now();
+			message = "Recording Started";
+		}
+	}
 
-    if (pose === "x" && videoState === "recording") {
-      cancelMessage();
-    }
+	function handlePose(pose) {
+		if (pose === "lmrm") {
+			if (videoState === "stopped") {
+				startRecording();
+			}
+		}
 
-    if (pose === "ok" && videoState === "recording") {
-      sendMessage();
-    }
-  }
+		if (pose === "x" && videoState === "recording") {
+			cancelMessage();
+		}
 
-  function cancelMessage() {
-    recording = [];
-    videoState = "stopped";
-  }
+		if (pose === "ok" && videoState === "recording") {
+			sendMessage();
+		}
+	}
 
-  function handleVoice(sentence) {
-    if (videoState === "recording") {
-      recording.push({
-        type: "voice",
-        content: sentence,
-        time: Date.now() - videoStartTime,
-      });
-      recording = recording;
-    }
-  }
+	function cancelMessage() {
+		recording = [];
+		videoState = "stopped";
+	}
 
-  const handleRunningPose = throttle((pose) => {
-    if (videoState === "recording") {
-      recording.push({
-        type: "pose",
-        content: pose,
-        time: Date.now() - videoStartTime,
-      });
-      recording = recording;
+	function handleVoice(sentence: any) {
+		if (videoState === "recording") {
+			recording.push({
+				type: "voice",
+				content: sentence,
+				time: Date.now() - videoStartTime,
+			});
+			recording = recording;
+		}
+	}
 
-      if (Date.now() - videoStartTime > 30000) {
-        stopRecording();
-      }
-    }
-  }, 50);
+	const handleRunningPose = throttle((pose) => {
+		if (videoState === "recording") {
+			recording.push({
+				type: "pose",
+				content: pose,
+				time: Date.now() - videoStartTime,
+			});
+			recording = recording;
 
-  function predict() {
-    const result =
-      model &&
-      allPoses &&
-      pose &&
-      (model.predict(_tf.tensor2d(normalizePose(pose), [1, 34])) as tf.Tensor);
+			if (Date.now() - videoStartTime > 30000) {
+				cancelMessage();
+			}
+		}
+	}, 50);
 
-    if (result) {
-      const res = result
-        .arraySync()[0]
-        .map((v, i) => {
-          return {
-            id: allPoses[i].id,
-            amount: v,
-          };
-        })
-        .sort((a, b) => a.amount - b.amount);
-      oldPrediction = prediction;
-      prediction = res[0];
-      if (oldPrediction && oldPrediction.id === prediction.id) {
-        confidence++;
-        if (confidence > 30) {
-          handlePose(prediction.id);
-        }
-      } else {
-        confidence = 0;
-      }
-    }
-  }
+	function predict() {
+		const result =
+			model &&
+			allPoses &&
+			pose &&
+			(model.predict(_tf.tensor2d(normalizePose(pose), [1, 34])) as tf.Tensor);
 
-  onMount(async () => {
-    let stream;
+		if (result) {
+			const res = result
+				.arraySync()[0]
+				.map((v, i) => {
+					return {
+						id: allPoses[i].id,
+						amount: v,
+					};
+				})
+				.sort((a, b) => b.amount - a.amount);
+			oldPrediction = prediction;
+			prediction = res[0];
+			console.log(prediction.id, prediction.amount);
+			if (
+				oldPrediction &&
+				oldPrediction.id === prediction.id &&
+				prediction.amount > -500
+			) {
+				confidence++;
+				if (confidence > 30) {
+					handlePose(prediction.id);
+				}
+			} else {
+				confidence = 0;
+			}
+		} else {
+			confidence = 0;
+		}
+	}
 
-    voice = createVoiceDetector((res, isFinal) => {
-      if (isFinal) {
-        handleVoice(res);
-      }
-    });
+	function handleKeyDown(ev) {
+		if (ev.key === " ") {
+			socket.send("message", { test: true });
+		}
+	}
 
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-      });
+	onMount(async () => {
+		let stream;
 
-      video.srcObject = stream;
+		socket.on("message", () => {
+			message = "Received a Message";
+			timeout = 10000;
+			setTimeout(() => {
+				timeout = 2000;
+			});
+		});
 
-      detector = createPoseDetector(video, (p) => {
-        pose = p;
-        predict();
-        handleRunningPose(p);
-      });
+		voice = createVoiceDetector((res, isFinal) => {
+			if (isFinal) {
+				handleVoice(res);
+			}
+		});
 
-      video.play();
-    } catch (error) {
-      console.error(error);
-    }
+		try {
+			stream = await navigator.mediaDevices.getUserMedia({
+				video: true,
+			});
 
-    allPoses = await api.getPoses();
+			video.srcObject = stream;
 
-    model = (await _tf.loadLayersModel(
-      "/brain/model/model.json"
-    )) as tf.Sequential;
+			detector = createPoseDetector(video, (p) => {
+				pose = p;
+				predict();
+				handleRunningPose(p);
+			});
 
-    return () => {
-      video.stop();
-      stream.stop();
-      voice.stop();
-    };
-  });
+			video.play();
+		} catch (error) {
+			console.error(error);
+		}
+
+		allPoses = await api.getPoses();
+
+		model = (await _tf.loadLayersModel(
+			"/brain/model/model.json"
+		)) as tf.Sequential;
+
+		return () => {
+			video.stop();
+			stream.stop();
+			voice.stop();
+		};
+	});
 </script>
 
+<svelte:window on:keydown={handleKeyDown} />
+
 <div class="inner-wrapper">
-  <pre>
+	<!--<pre>
     <code>
       {#each recording.slice(Math.max(recording.length - 5, 1)) as step}
         <p>({step.type}) {step.time}ms </p>
       {/each}
     </code>
-  </pre>
-  <video bind:this={video} width="600" height="480">
-    <track kind="captions" />
-  </video>
-  <p>{videoState}</p>
-  <PoseDisplay {pose} />
-  {#if prediction}
-    <p>{prediction.id} {confidence}</p>
-    <p>{prediction.amount}</p>
-  {/if}
+  </pre>-->
+	<video bind:this={video} width="600" height="480">
+		<track kind="captions" />
+	</video>
+	<p>{videoState}{prediction ? ` | ${prediction.id}` : ""}</p>
+	<PoseDisplay {pose} />
+
+	{#if message}
+		<div class="message-wrapper">
+			<p>{message}</p>
+		</div>
+	{/if}
 </div>
 
 <style>
-  pre {
-    position: absolute;
-  }
+	:global(body) {
+		overflow: hidden;
+	}
 
-  :global(nav) {
-    opacity: 0.05;
-  }
+	.message-wrapper {
+		position: fixed;
+		left: 50%;
+		bottom: 50%;
+		transform: translateX(-50%) translateY(50%);
+		padding: 1em;
+		background-color: white;
+	}
 
-  .inner-wrapper {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    top: 0px;
-    left: 0px;
-  }
+	.message-wrapper > p {
+		width: max-content;
+		margin: 0;
+		color: black;
+		font-size: 2em;
+	}
 
-  video {
-    display: none;
-  }
+	pre {
+		position: absolute;
+	}
 
-  p {
-    /* position: absolute; */
-    color: white;
-    top: 0px;
-  }
+	:global(nav) {
+		opacity: 0.05;
+	}
 
-  :global(svg) {
-    position: absolute;
-    left: 0px;
-    height: 100vh;
-    width: 100vw;
-  }
+	.inner-wrapper {
+		position: absolute;
+		width: 100vw;
+		height: 100vh;
+		top: 0px;
+		left: 0px;
+	}
+
+	video {
+		display: none;
+	}
+
+	p {
+		/* position: absolute; */
+		color: white;
+		top: 0px;
+		left: 10px;
+	}
+
+	:global(svg) {
+		position: absolute;
+		left: 0px;
+		height: 100vh;
+		width: 100vw;
+	}
 </style>

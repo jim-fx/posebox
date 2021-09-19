@@ -1,10 +1,10 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@poser/brain': workspace:*
-  '@poser/cli': workspace:*
-  '@poser/skelly': workspace:*
-  '@poser/types': workspace:*
+  '@poser/brain': link:../packages/brain
+  '@poser/cli': link:../packages/cli
+  '@poser/skelly': link:../packages/skelly
+  '@poser/types': link:../packages/types
   '@tensorflow/tfjs-core': ^3.6.0
   '@tensorflow/tfjs-node': ^3.6.1
   '@tensorflow/tfjs-node-gpu': ^3.9.0
@@ -1027,6 +1027,7 @@ packages:
     resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
+    requiresBuild: true
     dev: true
     optional: true
 
@@ -1858,6 +1859,7 @@ packages:
   /saslprep/1.0.3:
     resolution: {integrity: sha512-/MY/PEMbk2SuY5sScONwhUDsV2p77Znkb/q3nSVstq/yQzYJOH/Azh29p9oJLsl3LnQwSvZDKagDGBsBwSooag==}
     engines: {node: '>=6'}
+    requiresBuild: true
     dependencies:
       sparse-bitfield: 3.0.3
     dev: false
