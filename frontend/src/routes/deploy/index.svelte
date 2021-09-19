@@ -16,12 +16,23 @@
   let detector;
   let classifier;
 
+  let tposeCounter;
+  let lastPose;
+
+  function updateCurrentPose(prediction) {
+    if (lastPose === prediction) {
+    }
+    console.log(prediction);
+  }
+
   let model: tf.Sequential;
 
   $: prediction =
     model &&
     pose &&
     (model.predict(_tf.tensor2d(normalizePose(pose), [1, 34])) as tf.Tensor);
+
+  $: updateCurrentPose(prediction);
 
   let allPoses;
   api.getPoses().then((poses) => {

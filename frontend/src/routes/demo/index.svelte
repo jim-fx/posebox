@@ -3,6 +3,7 @@
   import { PoseDisplay } from "@poser/components";
   import type { Pose } from "@poser/types";
   import type * as tf from "@tensorflow/tfjs";
+  import { normalizePose } from "@poser/skelly";
   import {
     createPoseDetector,
     createVoiceDetector,
@@ -30,7 +31,7 @@
   let videoState = "stopped";
   let videoStartTime = 0;
 
-  function stopRecording() {
+  function sendMessage() {
     if (videoState === "recording") {
       videoState = "stopped";
 
@@ -49,13 +50,22 @@
   }
 
   function handlePose(pose) {
-    if (pose === "ok" && videoState === "stopped") {
+    if (pose === "lmrm" && videoState === "stopped") {
       startRecording();
     }
 
-    if (pose === "luru" && videoState === "recording") {
-      stopRecording();
+    if (pose === "x" && videoState === "recording") {
+      cancelMessage();
     }
+
+    if (pose === "ok" && videoState === "recording") {
+      sendMessage();
+    }
+  }
+
+  function cancelMessage() {
+    recording = [];
+    videoState = "stopped";
   }
 
   function handleVoice(sentence) {
@@ -89,7 +99,7 @@
       model &&
       allPoses &&
       pose &&
-      (model.predict(_tf.tensor2d(pose, [1, 34])) as tf.Tensor);
+      (model.predict(_tf.tensor2d(normalizePose(pose), [1, 34])) as tf.Tensor);
 
     if (result) {
       const res = result
@@ -166,6 +176,7 @@
   <video bind:this={video} width="600" height="480">
     <track kind="captions" />
   </video>
+  <p>{videoState}</p>
   <PoseDisplay {pose} />
   {#if prediction}
     <p>{prediction.id} {confidence}</p>
